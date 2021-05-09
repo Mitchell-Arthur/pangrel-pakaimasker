@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.pangrel.pakaimasker.LandingActivity
-import com.pangrel.pakaimasker.R
-import com.pangrel.pakaimasker.databinding.FragmentIntroductionBinding
 import com.pangrel.pakaimasker.databinding.FragmentIntroductionPage5Binding
 
 class IntroductionPage5 : Fragment() {
@@ -17,7 +15,10 @@ class IntroductionPage5 : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentIntroductionPage5Binding.inflate(inflater, container, false)
-        binding.btnToLogin.setOnClickListener {
+        binding.btnLogin.setOnClickListener {
+            (activity as LandingActivity).closeIntroduction()
+        }
+        binding.btnSignUp.setOnClickListener {
             (activity as LandingActivity).closeIntroduction()
         }
         return binding.root
