@@ -9,7 +9,7 @@ import com.pangrel.pakaimasker.R
 import com.pangrel.pakaimasker.databinding.FragmentIntroductionBinding
 
 
-class IntroductionFragment : Fragment() {
+class IntroductionFragment(private val currentPage: Int = 0) : Fragment() {
     private lateinit var binding: FragmentIntroductionBinding
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -18,6 +18,7 @@ class IntroductionFragment : Fragment() {
     ): View {
         binding = FragmentIntroductionBinding.inflate(inflater, container, false)
         binding.pager.adapter = activity?.let { IntroductionAdapter(it) }
+        binding.pager.currentItem = currentPage
         return binding.root
     }
 }

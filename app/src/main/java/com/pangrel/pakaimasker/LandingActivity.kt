@@ -16,8 +16,15 @@ class LandingActivity : AppCompatActivity() {
         binding = ActivityLandingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportFragmentManager.commit {
-            add(binding.container.id, IntroductionFragment())
+        val introPage = intent.getIntExtra("extra_intro_page", 0)
+        if (introPage == 0){
+            supportFragmentManager.commit {
+                add(binding.container.id, IntroductionFragment())
+            }
+        }else if (introPage == 4){
+            supportFragmentManager.commit {
+                add(binding.container.id, IntroductionFragment(4))
+            }
         }
     }
 

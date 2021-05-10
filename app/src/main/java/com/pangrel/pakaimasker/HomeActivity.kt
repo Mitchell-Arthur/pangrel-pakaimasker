@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -26,23 +27,24 @@ class HomeActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-
         if (isFirstTime(getPreferences(Context.MODE_PRIVATE))){
             introduction()
+        } else if (!isLogin(getPreferences(Context.MODE_PRIVATE))){
+            toLogin()
         }
     }
 
-    private fun isFirstTime(preferences: SharedPreferences): Boolean {
-        // for reading data from local directory
-        return preferences.getBoolean("isFirstTime", true) // if null then return true as default value
-    }
+    private fun isFirstTime(preferences: SharedPreferences): Boolean = preferences.getBoolean("isFirstTime", true)
     private fun introduction() {
-        startActivity(Intent(this, LandingActivity::class.java))
-        val sharedPref = this.getSharedPreferences(
-            "isFirstTime", Context.MODE_PRIVATE)
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
         with (sharedPref.edit()) {
             putBoolean("isFirstTime", false)
             apply()
         }
+        startActivity(Intent(this, LandingActivity::class.java).putExtra("extra_intro_page", 0))
+    }
+    private fun isLogin(preferences: SharedPreferences): Boolean = preferences.getBoolean("isLogin", false)
+    private fun toLogin(){
+        startActivity(Intent(this, LandingActivity::class.java).putExtra("extra_intro_page", 4))
     }
 }

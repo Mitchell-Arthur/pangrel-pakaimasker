@@ -78,43 +78,6 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:id="@+id/btnInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto"
-                        android:text="@string/informasi_pribadi"
-                        android:textColor="@color/black"
-                        tools:ignore="RelativeOverlap" />
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignParentEnd="true"
-                        android:src="@drawable/ic_userr"
-                        android:contentDescription="@string/todo" />
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/softgrey"
-                    android:visibility="visible" />
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/btnJadwal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
