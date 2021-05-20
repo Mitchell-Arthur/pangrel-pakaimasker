@@ -19,7 +19,7 @@
             android:padding="15dp"
             android:text="@string/title_history"
             android:textColor="@color/black"
-            android:textSize="30sp"
+            android:textSize="26sp"
             tools:targetApi="p" />
 
         <androidx.cardview.widget.CardView
@@ -40,12 +40,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:fontFamily="@font/poppins_regular"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:textFontWeight="600"
-                    android:text="@string/_80"
+                    android:text="@string/_100"
                     android:textColor="@color/black"
-                    android:textSize="48sp"
+                    android:textSize="36sp"
                     tools:targetApi="p" />
 
                 <LinearLayout
@@ -57,12 +56,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_regular"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:textFontWeight="600"
-                        android:text="@string/history_of_wearing_masks_today"
+                        android:text="@string/text_status"
                         android:textColor="@color/black"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         tools:targetApi="p" />
 
                     <TextView
@@ -70,9 +68,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_regular"
-                        android:text="@string/_80_menggunakan_masker_dari_100_scanning"
+                        android:text="@string/status"
                         android:textColor="@color/black"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
             </LinearLayout>

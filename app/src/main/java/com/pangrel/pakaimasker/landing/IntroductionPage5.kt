@@ -13,12 +13,9 @@ class IntroductionPage5 : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentIntroductionPage5Binding.inflate(inflater, container, false)
         binding.btnLogin.setOnClickListener {
-            (activity as LandingActivity).closeIntroduction()
-        }
-        binding.btnSignUp.setOnClickListener {
             (activity as LandingActivity).closeIntroduction()
         }
         return binding.root

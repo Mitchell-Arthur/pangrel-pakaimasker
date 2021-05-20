@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PakaiMasker</string>
+    <string name="title_home">Home</string>
+    <string name="title_history">History</string>
+    <string name="title_profile">Profile</string>
+    <string name="login">GET IN WITH GOOGLE</string>
+    <string name="todo">TODO</string>
+    <string name="_100">100%</string>
+    <string name="text_status">Current Mask Usage Status</string>
+    <string name="status">100% Using a mask of 100 scans</string>
+    <string name="hi">Hi</string>
+    <string name="name">Name</string>
+    <string name="statusNo">Please Use a Mask, or Add a Safe-Place</string>
+    <string name="statusYes">Thank you for complying with the Health Protocol. Stay Healthy and Enthusiastic !!!</string>
+    <string name="nama_lengkap">Full Name</string>
+    <string name="email">pakaimasker@gmail.com</string>
+    <string name="pengaturan">SETTINGS</string>
+    <string name="atur_jadwal_monitoring">Set Monitoring Schedule</string>
+    <string name="interval_deteksi">Detection interval</string>
+    <string name="atur_zona_aman">Set Safe Zone</string>
+    <string name="pemberitahuan">Notification</string>
+    <string name="ganti_bahasa">Change Language</string>
+    <string name="tentang">ABOUT</string>
+    <string name="tentang_kami">About Us</string>
+    <string name="keluar">Exit</string>
+    <string name="_17_mei_2021">17 Mei 2021</string>
+    <string name="ON">START MONITORING</string>
+    <string name="OFF">STOP MONITORING</string>
+    <string name="apa_itu_pakaimasker">What is PakaiMasker ?</string>
+    <string name="desdua">PakaiMasker is a mobile application that aims to monitor how orderly we use masks by taking facial figures for each period of time</string>
+    <string name="coba_sekarang">Try Now !! </string>
+    <string name="desempat">Ready to use masks in an orderly manner? Try PakaiMasker now!</string>
+    <string name="hello">HELLO!</string>
+    <string name="dessatu">Welcome to the PakaiMasker application, lets find out how orderly you wear masks</string>
+    <string name="fitur_pakaimasker">Features PakaiMasker</string>
+    <string name="destiga">PakaiMasker offers mask detection features, monitoring, daily summary as well as safe place mode</string>
+    <string name="connect">Pair With Other Devices</string>
+</resources>
