@@ -44,7 +44,7 @@ class HomeActivity : AppCompatActivity() {
         startActivity(Intent(this, LandingActivity::class.java).putExtra("extra_intro_page", 0))
     }
     private fun isLogin(preferences: SharedPreferences): Boolean = preferences.getBoolean("isLogin", false)
-    private fun toLogin(){
+    fun toLogin(){
         startActivity(Intent(this, LandingActivity::class.java).putExtra("extra_intro_page", 4))
     }
 }

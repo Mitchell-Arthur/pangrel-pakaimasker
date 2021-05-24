@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "842894546140",
+    "project_id": "pakaimasker-67b22",
+    "storage_bucket": "pakaimasker-67b22.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842894546140:android:6bf1a9c7ef151dd7eb1019",
+        "android_client_info": {
+          "package_name": "com.pangrel.pakaimasker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "842894546140-ht1vqd63lnonpir8bd7io86cjse4mbrh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnihQSdeyMdgq7qGq6L65bkjI2y_NOFnQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "842894546140-ht1vqd63lnonpir8bd7io86cjse4mbrh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
