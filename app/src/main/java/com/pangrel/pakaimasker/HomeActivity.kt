@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.util.*
 
 class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,5 +47,22 @@ class HomeActivity : AppCompatActivity() {
     private fun isLogin(preferences: SharedPreferences): Boolean = preferences.getBoolean("isLogin", false)
     fun toLogin(){
         startActivity(Intent(this, LandingActivity::class.java).putExtra("extra_intro_page", 4))
+    }
+
+    fun updateMonitoringSchedule(start: String, end: String){
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putString("monitorStart", start)
+            putString("monitorEnd", end)
+            apply()
+        }
+    }
+
+    fun setInterval(interval: Float){
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putFloat("monitorInterval", interval)
+            apply()
+        }
     }
 }

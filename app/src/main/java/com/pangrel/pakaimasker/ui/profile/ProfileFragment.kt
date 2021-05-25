@@ -3,6 +3,7 @@ package com.pangrel.pakaimasker.ui.profile
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -88,6 +89,7 @@ class ProfileFragment : Fragment() {
                         "set monitor time $timeFrom until $timeUntil",
                         Toast.LENGTH_LONG
                     ).show()
+                    (activity as HomeActivity).updateMonitoringSchedule(timeFrom, timeUntil)
                 }
             }
             val pickerUntil = TimePickerDialog(
@@ -137,7 +139,7 @@ class ProfileFragment : Fragment() {
                 "SET"
             ) { dialog, which ->
                 // set interval
-
+                (activity as HomeActivity).setInterval(sliderInterval.value)
                 dialog.dismiss()
             }
 
@@ -149,7 +151,7 @@ class ProfileFragment : Fragment() {
         }
 
         btnZona.setOnClickListener {
-
+            
         }
 
         saklar.setOnCheckedChangeListener { _, isChecked ->
