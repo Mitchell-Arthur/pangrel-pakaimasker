@@ -9,7 +9,7 @@
     <string name="_100">100%</string>
     <string name="text_status">Current Mask Usage Status</string>
     <string name="status">100% Using a mask of 100 scans</string>
-    <string name="hi">Hi</string>
+    <string name="hi">Hi,</string>
     <string name="name">Name</string>
     <string name="statusNo">Please Use a Mask, or Add a Safe-Place</string>
     <string name="statusYes">Thank you for complying with the Health Protocol. Stay Healthy and Enthusiastic !!!</string>

@@ -8,7 +8,7 @@
     <string name="_100">100%</string>
     <string name="text_status">Status Penggunaan Masker Saat Ini</string>
     <string name="status">100% Menggunakan masker dari 100 scanning</string>
-    <string name="hi">Hi</string>
+    <string name="hi">Hi,</string>
     <string name="name">Name</string>
     <string name="statusNo">Silahkan Gunakan Masker, atau Tambahkan Safe-Place</string>
     <string name="statusYes">Terimakasih Telah Mematuhi Protokol Kesehatan. Tetap Sehat dan Semangat !!!</string>
@@ -34,4 +34,5 @@
     <string name="dessatu">Selamat datang di aplikasi PakaiMasker, yuk ketahui seberapa tertibnya kamu memakai masker</string>
     <string name="fitur_pakaimasker">Fitur PakaiMasker</string>
     <string name="destiga">PakaiMasker menawarkan fitur pendeteksian masker, monitoring, rangkuman harian dan juga mode safe place</string>
-    <string name="connect">Pasangkan Dengan Perangkat Lain</string></resources>
+    <string name="connect">Pasangkan Dengan Perangkat Lain</string>
+</resources>

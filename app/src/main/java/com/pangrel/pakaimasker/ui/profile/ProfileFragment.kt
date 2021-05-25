@@ -12,7 +12,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.slider.Slider
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.pangrel.pakaimasker.HomeActivity
 import com.pangrel.pakaimasker.R
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -21,6 +25,8 @@ import java.util.*
 
 
 class ProfileFragment : Fragment() {
+
+    private lateinit var mAuth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +38,16 @@ class ProfileFragment : Fragment() {
     @SuppressLint("SimpleDateFormat")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mAuth = FirebaseAuth.getInstance()
+        val currentUser = mAuth.currentUser
+        tv_profilename.text = currentUser?.displayName
+        tv_profileemail.text = currentUser?.email
+        Glide.with(this)
+            .load(currentUser?.photoUrl)
+            .centerCrop()
+            .into(img_profile);
+
         var timeFrom = ""
         var timeUntil = ""
 
@@ -44,6 +60,7 @@ class ProfileFragment : Fragment() {
             val alert: AlertDialog.Builder = AlertDialog.Builder(context)
             alert.setTitle("Apakah anda mau keluar?")
             alert.setPositiveButton("Ya") { dialog, whichButton ->
+                Firebase.auth.signOut()
                 (activity as HomeActivity).toLogin()
             }
             alert.setNegativeButton("Tidak", null)
@@ -59,13 +76,27 @@ class ProfileFragment : Fragment() {
                 calendarUntil.set(Calendar.MINUTE, minute)
                 val simpleDateFormat = SimpleDateFormat("HH:mm")
                 timeUntil = simpleDateFormat.format(calendarUntil.time)
-                if (calendarUntil.time <= calendarfrom.time){
-                    Toast.makeText(context, "waktu monitor error, waktu selesai monitor harus sesudah waktu mulai monitor", Toast.LENGTH_LONG).show()
-                }else{
-                    Toast.makeText(context, "set monitor time $timeFrom until $timeUntil", Toast.LENGTH_LONG).show()
+                if (calendarUntil.time <= calendarfrom.time) {
+                    Toast.makeText(
+                        context,
+                        "waktu monitor error, waktu selesai monitor harus sesudah waktu mulai monitor",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "set monitor time $timeFrom until $timeUntil",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
-            val pickerUntil = TimePickerDialog(context, timeUntilListener, calendarUntil.get(Calendar.HOUR_OF_DAY), calendarUntil.get(Calendar.MINUTE), true)
+            val pickerUntil = TimePickerDialog(
+                context,
+                timeUntilListener,
+                calendarUntil.get(Calendar.HOUR_OF_DAY),
+                calendarUntil.get(Calendar.MINUTE),
+                true
+            )
             pickerUntil.setTitle("Jadwal Selesai Monitor")
             pickerUntil.show()
 
@@ -75,7 +106,13 @@ class ProfileFragment : Fragment() {
                 val simpleDateFormat = SimpleDateFormat("HH:mm")
                 timeFrom = simpleDateFormat.format(calendarfrom.time)
             }
-            val pickerFrom = TimePickerDialog(context, timeFromListener, calendarfrom.get(Calendar.HOUR_OF_DAY), calendarfrom.get(Calendar.MINUTE), true)
+            val pickerFrom = TimePickerDialog(
+                context,
+                timeFromListener,
+                calendarfrom.get(Calendar.HOUR_OF_DAY),
+                calendarfrom.get(Calendar.MINUTE),
+                true
+            )
             pickerFrom.setTitle("Jadwal Mulai Monitor")
             pickerFrom.show()
         }
