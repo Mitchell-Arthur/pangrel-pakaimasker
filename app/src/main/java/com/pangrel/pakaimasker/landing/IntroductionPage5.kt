@@ -45,8 +45,8 @@ class IntroductionPage5 : Fragment() {
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         firebaseAuth = FirebaseAuth.getInstance()
         binding.btnLogin.setOnClickListener {
-            (activity as LandingActivity).closeIntroduction()
-            //signIn()
+            //(activity as LandingActivity).closeIntroduction() jangan dihapus. ini buat mitchell
+            signIn()
         }
     }
 
