@@ -65,4 +65,49 @@ class HomeActivity : AppCompatActivity() {
             apply()
         }
     }
+
+    fun getLocation(): ArrayList<String>? {
+        val data = ArrayList<String>()
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        val locationData = sharedPref.getString("locationData", null)
+        println(locationData)
+        val temp = locationData?.split("/*;")
+        if (temp != null) {
+            for (element in temp){
+                data.add(element)
+            }
+            data.removeAt(data.size - 1)
+        }
+        return data
+    }
+
+    fun updateLocation(locations: ArrayList<String>) {
+        var location: String?
+        if (locations.size > 0){
+            location = ""
+            for (i in locations){
+                location += "$i/*;"
+            }
+            println(location)
+            val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+            with (sharedPref.edit()) {
+                putString("locationData", location)
+                apply()
+            }
+        }else{
+            val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+            with (sharedPref.edit()) {
+                putString("locationData", null)
+                apply()
+            }
+        }
+    }
+
+    fun deleteLocation(position: Int){
+        val temp = getLocation()
+        if (temp != null) {
+            temp.removeAt(position)
+            updateLocation(temp)
+        }
+    }
 }

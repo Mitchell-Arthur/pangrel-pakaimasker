@@ -3,15 +3,13 @@ package com.pangrel.pakaimasker.ui.profile
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.material.slider.Slider
@@ -20,9 +18,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.pangrel.pakaimasker.HomeActivity
 import com.pangrel.pakaimasker.R
+import com.pangrel.pakaimasker.SafeZoneAdapter
 import kotlinx.android.synthetic.main.fragment_profile.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ProfileFragment : Fragment() {
@@ -36,7 +36,7 @@ class ProfileFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressLint("SimpleDateFormat", "InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -47,7 +47,7 @@ class ProfileFragment : Fragment() {
         Glide.with(this)
             .load(currentUser?.photoUrl)
             .centerCrop()
-            .into(img_profile);
+            .into(img_profile)
 
         var timeFrom = ""
         var timeUntil = ""
@@ -125,6 +125,7 @@ class ProfileFragment : Fragment() {
             dialog.setView(dialogView)
             dialog.setCancelable(true)
             dialog.setTitle("Atur Interval")
+
             val sliderInterval = dialogView.findViewById<Slider>(R.id.slider_interval)
             val tvInterval = dialogView.findViewById<TextView>(R.id.tv_interval)
             sliderInterval.addOnChangeListener { slider, value, fromUser ->
@@ -151,7 +152,50 @@ class ProfileFragment : Fragment() {
         }
 
         btnZona.setOnClickListener {
-            
+            val dialog = AlertDialog.Builder(context).create()
+            val dialogView = layoutInflater.inflate(R.layout.dialog_safe_zone, null)
+            dialog.setCancelable(true)
+            dialog.setView(dialogView)
+
+            val lvSafeZone = dialogView.findViewById<ListView>(R.id.lv_safe_zone)
+            val locations = (activity as HomeActivity).getLocation()
+            val adapter = SafeZoneAdapter((activity as HomeActivity))
+            adapter.locations = locations as ArrayList<String>
+            lvSafeZone.adapter = adapter
+            val btnAddLocation = dialogView.findViewById<Button>(R.id.btn_add_location)
+
+            //println(locations.size.toString())
+
+            btnAddLocation.setOnClickListener {
+                val dialog2 = AlertDialog.Builder(context).create()
+                val dialogView2 = layoutInflater.inflate(R.layout.dialog_add_safe_zone, null)
+                dialog2.setCancelable(true)
+                dialog2.setView(dialogView2)
+
+                val edLocation = dialogView2.findViewById<EditText>(R.id.ed_location)
+                val btnAddSafeZone = dialogView2.findViewById<Button>(R.id.btn_add_safe_zone)
+                btnAddSafeZone.setOnClickListener {
+                    adapter.locations.add(edLocation.text.toString())
+                    //(lvSafeZone.adapter as SafeZoneAdapter).locations = locations
+                    adapter.notifyDataSetChanged()
+                    dialog2.dismiss()
+                }
+                val ivExit2 = dialogView2.findViewById<ImageView>(R.id.iv_exit2)
+                ivExit2.setOnClickListener {
+                    dialog2.dismiss()
+                }
+
+                dialog2.show()
+            }
+
+
+            val ivExit = dialogView.findViewById<ImageView>(R.id.iv_exit)
+            ivExit.setOnClickListener {
+                dialog.dismiss()
+                (activity as HomeActivity).updateLocation(adapter.locations)
+            }
+
+            dialog.show()
         }
 
         saklar.setOnCheckedChangeListener { _, isChecked ->

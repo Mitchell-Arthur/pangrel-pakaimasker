@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -44,7 +45,8 @@ class IntroductionPage5 : Fragment() {
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         firebaseAuth = FirebaseAuth.getInstance()
         binding.btnLogin.setOnClickListener {
-            signIn()
+            (activity as LandingActivity).closeIntroduction()
+            //signIn()
         }
     }
 
