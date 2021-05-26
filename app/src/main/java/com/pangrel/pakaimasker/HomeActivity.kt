@@ -66,6 +66,8 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    fun getInterval(): Float = this.getPreferences(Context.MODE_PRIVATE).getFloat("monitorInterval", 5.0f)
+
     fun getLocation(): ArrayList<String>? {
         val data = ArrayList<String>()
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
@@ -103,11 +105,13 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    fun deleteLocation(position: Int){
-        val temp = getLocation()
-        if (temp != null) {
-            temp.removeAt(position)
-            updateLocation(temp)
+    fun setNotificationStatus(status: Boolean){
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putBoolean("statusMonitoring", status)
+            apply()
         }
     }
+
+    fun getNotificationStatus(): Boolean = this.getPreferences(Context.MODE_PRIVATE).getBoolean("statusMonitoring", false)
 }

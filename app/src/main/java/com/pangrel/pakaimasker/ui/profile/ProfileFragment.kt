@@ -128,11 +128,18 @@ class ProfileFragment : Fragment() {
 
             val sliderInterval = dialogView.findViewById<Slider>(R.id.slider_interval)
             val tvInterval = dialogView.findViewById<TextView>(R.id.tv_interval)
+            val valueInterval = (activity as HomeActivity).getInterval()
+            sliderInterval.value = valueInterval
+            when (sliderInterval.value) {
+                5.0f -> tvInterval.text = "Tiap 5 detik"
+                10.0f -> tvInterval.text = "Tiap 10 detik"
+                15.0f -> tvInterval.text = "Tiap 15 detik"
+            }
             sliderInterval.addOnChangeListener { slider, value, fromUser ->
                 when (slider.value) {
-                    1.0f -> tvInterval.text = "Tiap 5 detik"
-                    2.0f -> tvInterval.text = "Tiap 10 detik"
-                    3.0f -> tvInterval.text = "Tiap 15 detik"
+                    5.0f -> tvInterval.text = "Tiap 5 detik"
+                    10.0f -> tvInterval.text = "Tiap 10 detik"
+                    15.0f -> tvInterval.text = "Tiap 15 detik"
                 }
             }
 
@@ -163,8 +170,6 @@ class ProfileFragment : Fragment() {
             adapter.locations = locations as ArrayList<String>
             lvSafeZone.adapter = adapter
             val btnAddLocation = dialogView.findViewById<Button>(R.id.btn_add_location)
-
-            //println(locations.size.toString())
 
             btnAddLocation.setOnClickListener {
                 val dialog2 = AlertDialog.Builder(context).create()
@@ -198,7 +203,10 @@ class ProfileFragment : Fragment() {
             dialog.show()
         }
 
+
+        saklar.isChecked = (activity as HomeActivity).getNotificationStatus()
         saklar.setOnCheckedChangeListener { _, isChecked ->
+            (activity as HomeActivity).setNotificationStatus(isChecked)
             val message = if (isChecked) "Pemberitahuan Dinyalakan" else "Pemberitahuan Dimatikan"
             Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
         }
