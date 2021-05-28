@@ -16,6 +16,11 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.pangrel.pakaimasker.ui.home.HomeFragment
+import kotlinx.android.synthetic.main.fragment_home.*
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -27,6 +32,7 @@ class HomeActivity : AppCompatActivity() {
                 CamService.ACTION_PREPARED -> startMonitoring()
                 CamService.ACTION_STOPPED -> stopMonitoring()
                 CamService.ACTION_LOCATION -> handleSafeZone(p1)
+                CamService.ACTION_RESULT -> handleResult(p1)
             }
         }
     }
@@ -38,6 +44,7 @@ class HomeActivity : AppCompatActivity() {
         filter.addAction(CamService.ACTION_PREPARED)
         filter.addAction(CamService.ACTION_STOPPED)
         filter.addAction(CamService.ACTION_LOCATION)
+        filter.addAction(CamService.ACTION_RESULT)
         registerReceiver(receiver, filter)
     }
 
@@ -214,7 +221,22 @@ class HomeActivity : AppCompatActivity() {
 
     fun getNotificationStatus(): Boolean = this.getPreferences(Context.MODE_PRIVATE).getBoolean("statusMonitoring", true)
 
+    private fun handleResult(intent: Intent) {
+        val cls = intent.getIntExtra("class", -1)
+        val passed = intent.getBooleanExtra("passed", true)
 
+        if (passed) {
+            val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+            with(sharedPref.edit()) {
+                putInt("classificationResult", cls)
+                putString("classificationUpdate", LocalDateTime.now().toString())
+                apply()
+            }
+        }
+
+
+        sendBroadcast(Intent(HomeFragment.ACTION_UPDATE_RESULT))
+    }
 
     private fun handleSafeZone(intent: Intent) {
         val zones = intent.getParcelableArrayListExtra<Zone>("zones")
@@ -236,6 +258,8 @@ class HomeActivity : AppCompatActivity() {
             putBoolean("isInSafeZone", safe)
             apply()
         }
+
+        sendBroadcast(Intent(HomeFragment.ACTION_UPDATE_SAFEZONE))
     }
 
     companion object {

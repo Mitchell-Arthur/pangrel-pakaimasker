@@ -66,7 +66,7 @@ class ImageClassification : AsyncTask<MutableList<Bitmap>, Void, ClassificationR
                 override val image = lastImage
                 override var face = 0
                 override var classification = UNSURE
-                override var accuracy = 0.0
+                override var accuracy = 1.0
                 override var min_accuracy = 1.0
                 override var max_accuracy = 0.0
                 override val duration = (endTime - startTime)
@@ -148,6 +148,7 @@ class ImageClassification : AsyncTask<MutableList<Bitmap>, Void, ClassificationR
     }
 
     companion object {
+        val UNDEFINED = -3
         val UNSURE = -2
         val NOT_FOUND = -1
         val WITH_MASK = 0

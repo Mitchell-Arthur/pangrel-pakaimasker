@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.pangrel.pakaimasker.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -28,7 +29,8 @@ class HomeFragment : Fragment() {
             when (p1?.action) {
                 ACTION_MONITOR_ON -> updateButtonText(true)
                 ACTION_MONITOR_OFF -> updateButtonText(false)
-                CamService.ACTION_RESULT -> handleResult(p1)
+                ACTION_UPDATE_SAFEZONE -> updateSafeZoneStatus()
+                ACTION_UPDATE_RESULT -> updateClassificationResult()
             }
         }
     }
@@ -39,7 +41,8 @@ class HomeFragment : Fragment() {
         val filter = IntentFilter()
         filter.addAction(ACTION_MONITOR_ON)
         filter.addAction(ACTION_MONITOR_OFF)
-        filter.addAction(CamService.ACTION_RESULT)
+        filter.addAction(ACTION_UPDATE_SAFEZONE)
+        filter.addAction(ACTION_UPDATE_RESULT)
         activity?.registerReceiver(receiver, filter)
     }
 
@@ -84,6 +87,7 @@ class HomeFragment : Fragment() {
             }
         }
 
+        updateClassificationResult()
         updateSafeZoneStatus()
     }
 
@@ -98,6 +102,43 @@ class HomeFragment : Fragment() {
         btnMonitoring.isEnabled = true
     }
 
+    private fun updateClassificationResult() {
+        val classificationResult =
+            activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("classificationResult", ImageClassification.UNDEFINED)
+        val classificationUpdate =
+            activity?.getPreferences(Context.MODE_PRIVATE)?.getString("classificationUpdate", "")
+
+        var dateTime = LocalDateTime.now()
+
+        if (classificationUpdate !== "") {
+            dateTime = LocalDateTime.parse(classificationUpdate)
+        }
+        Log.d("HomeFragment", dateTime.toString())
+
+
+        // Ini ubah mega, ubah UI sesuai hasil
+
+        var status = ""
+        if (classificationResult === com.pangrel.pakaimasker.ImageClassification.UNSURE) {
+            status = "Unsure"
+            Toast.makeText(activity?.applicationContext, "INCONSISTENT RESULT", Toast.LENGTH_LONG).show()
+        }
+        if (classificationResult === com.pangrel.pakaimasker.ImageClassification.NOT_FOUND) {
+            status = "No Face"
+            Toast.makeText(activity?.applicationContext, "NO FACE FOUND", Toast.LENGTH_LONG).show()
+        }
+        if (classificationResult === com.pangrel.pakaimasker.ImageClassification.WITH_MASK) {
+            status = "Masked"
+            Toast.makeText(activity?.applicationContext, "MASK USED", Toast.LENGTH_LONG).show()
+        }
+        if (classificationResult === com.pangrel.pakaimasker.ImageClassification.WITHOUT_MASK) {
+            status = "Unmasked"
+            Toast.makeText(activity?.applicationContext, "MASK UNUSED", Toast.LENGTH_LONG).show()
+        }
+
+        tv_laststatus.setText(status + " at " + dateTime.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME))
+    }
+
     private fun updateSafeZoneStatus() {
         val isInSafeZone =
             activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean("isInSafeZone", false)
@@ -110,39 +151,17 @@ class HomeFragment : Fragment() {
             // Ini ubah mega, ubah UI kalau dia berada di SafeZone
             Toast.makeText(activity?.applicationContext, "You are " + safeZoneDistance + " meters from safe-zone (" + safeZoneName + ")", Toast.LENGTH_LONG)
                 .show()
+        } else {
+            // Ini ubah mega, ubah UI kalau dia udah gak berada di SafeZone
+            Toast.makeText(activity?.applicationContext, "You are is not in safe-zone", Toast.LENGTH_LONG)
+                .show()
         }
-    }
-
-    private fun handleResult(intent: Intent) {
-        val cls = intent.getIntExtra("class", -1)
-        val accuracy = intent.getDoubleExtra("accuracy", 0.0)
-        var status = ""
-
-
-        // Ini ubah mega, ubah UI sesuai hasil
-
-        if (cls === ImageClassification.UNSURE) {
-            status = "Unsure"
-            Toast.makeText(activity?.applicationContext, "INCONSISTENT RESULT", Toast.LENGTH_LONG).show()
-        }
-        if (cls === ImageClassification.NOT_FOUND) {
-            status = "No Face"
-            Toast.makeText(activity?.applicationContext, "NO FACE FOUND", Toast.LENGTH_LONG).show()
-        }
-        if (cls === ImageClassification.WITH_MASK) {
-            status = "Masked"
-            Toast.makeText(activity?.applicationContext, "MASK USED (" + (accuracy * 100).roundToInt().toString() + "%" + ")", Toast.LENGTH_LONG).show()
-        }
-        if (cls === ImageClassification.WITHOUT_MASK) {
-            status = "Unmasked"
-            Toast.makeText(activity?.applicationContext, "MASK UNUSED (" + (accuracy * 100).roundToInt().toString() + "%" + ")", Toast.LENGTH_LONG).show()
-        }
-
-        tv_laststatus.setText(status + " at " + LocalTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME))
     }
 
     companion object {
-        val ACTION_MONITOR_ON = "pakaimasker.action.MONITOR_ON"
-        val ACTION_MONITOR_OFF = "pakaimasker.action.MONITOR_OFF"
+        val ACTION_MONITOR_ON = "homefragment.action.MONITOR_ON"
+        val ACTION_MONITOR_OFF = "homefragment.action.MONITOR_OFF"
+        val ACTION_UPDATE_RESULT = "homefragment.action.UPDATE_RESULT"
+        val ACTION_UPDATE_SAFEZONE = "homefragment.action.UPDATE_SAFEZONE"
     }
 }
