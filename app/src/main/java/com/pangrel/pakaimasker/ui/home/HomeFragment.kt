@@ -121,11 +121,9 @@ class HomeFragment : Fragment() {
         var status = ""
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.UNSURE) {
             status = "Unsure"
-            Toast.makeText(activity?.applicationContext, "INCONSISTENT RESULT", Toast.LENGTH_LONG).show()
         }
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.NOT_FOUND) {
             status = "No Face"
-            Toast.makeText(activity?.applicationContext, "NO FACE FOUND", Toast.LENGTH_LONG).show()
         }
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.WITH_MASK) {
             status = "Masked"
