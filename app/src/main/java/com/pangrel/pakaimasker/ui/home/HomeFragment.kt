@@ -68,7 +68,9 @@ class HomeFragment : Fragment() {
 
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth.currentUser
-        tv_name.text = currentUser?.displayName
+        val fullName = currentUser?.displayName
+        val firstName = fullName?.split(" ")?.first()
+        tv_name.text = firstName
 
         if (activity != null) {
             updateButtonText(isServiceRunning(activity.applicationContext, CamService::class.java))
@@ -121,16 +123,20 @@ class HomeFragment : Fragment() {
         var status = ""
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.UNSURE) {
             status = "Unsure"
+            img_status.setImageResource(R.drawable.unmasked_icon)
         }
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.NOT_FOUND) {
             status = "No Face"
+            img_status.setImageResource(R.drawable.unmasked_icon)
         }
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.WITH_MASK) {
             status = "Masked"
+            img_status.setImageResource(R.drawable.masked_icon)
             Toast.makeText(activity?.applicationContext, "MASK USED", Toast.LENGTH_LONG).show()
         }
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.WITHOUT_MASK) {
             status = "Unmasked"
+            img_status.setImageResource(R.drawable.unmasked_icon)
             Toast.makeText(activity?.applicationContext, "MASK UNUSED", Toast.LENGTH_LONG).show()
         }
 
@@ -147,6 +153,7 @@ class HomeFragment : Fragment() {
                 activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("safeZoneDistance", 0)
 
             // Ini ubah mega, ubah UI kalau dia berada di SafeZone
+            img_status.setImageResource(R.drawable.safezone_icon)
             tv_status.setText("You are " + safeZoneDistance + " meters from safe-zone (" + safeZoneName + ")")
         }
     }
