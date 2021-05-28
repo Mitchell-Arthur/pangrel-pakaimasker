@@ -149,12 +149,7 @@ class HomeFragment : Fragment() {
                 activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("safeZoneDistance", 0)
 
             // Ini ubah mega, ubah UI kalau dia berada di SafeZone
-            Toast.makeText(activity?.applicationContext, "You are " + safeZoneDistance + " meters from safe-zone (" + safeZoneName + ")", Toast.LENGTH_LONG)
-                .show()
-        } else {
-            // Ini ubah mega, ubah UI kalau dia udah gak berada di SafeZone
-            Toast.makeText(activity?.applicationContext, "You are is not in safe-zone", Toast.LENGTH_LONG)
-                .show()
+            tv_status.setText("You are " + safeZoneDistance + " meters from safe-zone (" + safeZoneName + ")")
         }
     }
 
