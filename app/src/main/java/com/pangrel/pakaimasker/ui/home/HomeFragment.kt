@@ -83,6 +83,8 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+        updateSafeZoneStatus()
     }
 
     fun updateButtonText(running: Boolean) {
@@ -96,12 +98,28 @@ class HomeFragment : Fragment() {
         btnMonitoring.isEnabled = true
     }
 
+    private fun updateSafeZoneStatus() {
+        val isInSafeZone =
+            activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean("isInSafeZone", false)
+        if (isInSafeZone == true) {
+            val safeZoneName =
+                activity?.getPreferences(Context.MODE_PRIVATE)?.getString("safeZoneName", "")
+            val safeZoneDistance =
+                activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("safeZoneDistance", 0)
 
+            // Ini ubah mega, ubah UI kalau dia berada di SafeZone
+            Toast.makeText(activity?.applicationContext, "You are " + safeZoneDistance + " meters from safe-zone (" + safeZoneName + ")", Toast.LENGTH_LONG)
+                .show()
+        }
+    }
 
     private fun handleResult(intent: Intent) {
         val cls = intent.getIntExtra("class", -1)
         val accuracy = intent.getDoubleExtra("accuracy", 0.0)
         var status = ""
+
+
+        // Ini ubah mega, ubah UI sesuai hasil
 
         if (cls === ImageClassification.UNSURE) {
             status = "Unsure"

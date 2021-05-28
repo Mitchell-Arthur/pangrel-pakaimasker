@@ -26,6 +26,7 @@ class HomeActivity : AppCompatActivity() {
             when (p1?.action) {
                 CamService.ACTION_PREPARED -> startMonitoring()
                 CamService.ACTION_STOPPED -> stopMonitoring()
+                CamService.ACTION_LOCATION -> handleSafeZone(p1)
             }
         }
     }
@@ -105,12 +106,17 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateServiceConfig() {
-        val intent = Intent(CamService.ACTION_UPDATE_CONFIG)
+        val intent1 = Intent(CamService.ACTION_UPDATE_CONFIG)
 
-        intent.putExtra("interval", getInterval().toLong() * 1000)
-        intent.putExtra("alert", getNotificationStatus())
+        intent1.putExtra("interval", getInterval().toLong() * 1000)
+        intent1.putExtra("alert", getNotificationStatus())
 
-        sendBroadcast(intent)
+        sendBroadcast(intent1)
+
+
+        val intent2 = Intent(CamService.ACTION_UPDATE_SAFEZONE)
+        intent2.putExtra("zones", getLocation())
+        sendBroadcast(intent2)
     }
 
     private fun startMonitoring() {
@@ -154,22 +160,26 @@ class HomeActivity : AppCompatActivity() {
 
     fun getInterval(): Float = this.getPreferences(Context.MODE_PRIVATE).getFloat("monitorInterval", 5.0f)
 
-    fun getLocation(): ArrayList<String>? {
-        val data = ArrayList<String>()
+    fun getLocation(): ArrayList<Zone>? {
+        val data = ArrayList<Zone>()
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
-        val locationData = sharedPref.getString("locationData", null)
+        val locationData = sharedPref.getString("locationsData", null)
         println(locationData)
         val temp = locationData?.split("/*;")
         if (temp != null) {
             for (element in temp){
-                data.add(element)
+                if (element != "")
+                    data.add(Zone.createFromString(element))
             }
-            data.removeAt(data.size - 1)
         }
         return data
     }
 
-    fun updateLocation(locations: ArrayList<String>) {
+    fun updateLocation(locations: ArrayList<Zone>) {
+        val intent = Intent(CamService.ACTION_UPDATE_SAFEZONE)
+        intent.putExtra("zones", locations)
+        sendBroadcast(intent)
+
         var location: String?
         if (locations.size > 0){
             location = ""
@@ -179,13 +189,13 @@ class HomeActivity : AppCompatActivity() {
             println(location)
             val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
             with (sharedPref.edit()) {
-                putString("locationData", location)
+                putString("locationsData", location)
                 apply()
             }
         }else{
             val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
             with (sharedPref.edit()) {
-                putString("locationData", null)
+                putString("locationsData", null)
                 apply()
             }
         }
@@ -204,6 +214,29 @@ class HomeActivity : AppCompatActivity() {
 
     fun getNotificationStatus(): Boolean = this.getPreferences(Context.MODE_PRIVATE).getBoolean("statusMonitoring", true)
 
+
+
+    private fun handleSafeZone(intent: Intent) {
+        val zones = intent.getParcelableArrayListExtra<Zone>("zones")
+        val safe = intent.getBooleanExtra("safe", false)
+
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+
+        if (safe) {
+            val shortestZones = zones.sortedWith(compareBy({ it.distance })).first()
+
+            with (sharedPref.edit()) {
+                putString("safeZoneName", shortestZones.name)
+                putInt("safeZoneDistance", shortestZones.distance)
+                apply()
+            }
+        }
+
+        with (sharedPref.edit()) {
+            putBoolean("isInSafeZone", safe)
+            apply()
+        }
+    }
 
     companion object {
         val CODE_PERM_CAMERA = 6112

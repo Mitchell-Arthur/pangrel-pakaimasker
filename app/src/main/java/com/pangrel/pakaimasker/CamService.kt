@@ -55,8 +55,7 @@ class CamService() : Service() {
 
         val filter = IntentFilter()
         filter.addAction(ACTION_MONITOR)
-        filter.addAction(ACTION_ADD_SAFEZONE)
-        filter.addAction(ACTION_DEL_SAFEZONE)
+        filter.addAction(ACTION_UPDATE_SAFEZONE)
         filter.addAction(ACTION_UPDATE_CONFIG)
         registerReceiver(receiver, filter)
 
@@ -85,16 +84,13 @@ class CamService() : Service() {
                 Log.d(TAG, "Receive: " + p1?.action)
                 when (p1?.action) {
                     ACTION_MONITOR -> startMonitoring()
-                    ACTION_ADD_SAFEZONE -> {
-                        val notificationManager =
-                            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                        notificationManager.cancel(REMINDER_NOTIFICATION_ID)
-                        locationTracker?.addSafeZone(
-                            p1.getStringExtra("name"),
-                            p1.getParcelableExtra("location")
-                        )
+                    ACTION_UPDATE_SAFEZONE -> {
+//                        val notificationManager =
+//                            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//                        notificationManager.cancel(REMINDER_NOTIFICATION_ID)
+
+                        locationTracker?.updateSafeZones(p1.getParcelableArrayListExtra<Zone>("zones"))
                     }
-                    ACTION_DEL_SAFEZONE -> locationTracker?.removeSafeZone(p1.getStringExtra("name"))
                     ACTION_UPDATE_CONFIG -> {
                         CAPUTRE_INTERVAL = p1.getLongExtra("interval", CAPUTRE_INTERVAL)
                         LOCATION_INTERVAL = p1.getLongExtra("interval", LOCATION_INTERVAL)
@@ -270,8 +266,7 @@ class CamService() : Service() {
         val ACTION_RESULT = "pakaimasker.action.RESULT"
         val ACTION_LOCATION = "pakaimasker.action.LOCATION"
         val ACTION_MONITOR = "pakaimasker.action.MONITOR"
-        val ACTION_ADD_SAFEZONE = "pakaimasker.action.ADD_SAFEZONE"
-        val ACTION_DEL_SAFEZONE = "pakaimasker.action.DEL_SAFEZONE"
+        val ACTION_UPDATE_SAFEZONE = "pakaimasker.action.UPDATE_SAFEZONE"
         val ACTION_UPDATE_CONFIG = "pakaimasker.action.UPDATE_CONFIG"
 
         val CHANNEL_ID = "cam_service_channel_id"

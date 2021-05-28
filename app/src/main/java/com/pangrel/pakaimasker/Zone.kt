@@ -3,6 +3,7 @@ package com.pangrel.pakaimasker
 import android.location.Location
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 
 class Zone() : Parcelable {
     var name: String = ""
@@ -45,6 +46,10 @@ class Zone() : Parcelable {
         return 0
     }
 
+    override fun toString(): String {
+        return name + Zone.delimeter + latitude.toString() + Zone.delimeter + longitude.toString()
+    }
+
     companion object CREATOR : Parcelable.Creator<Zone> {
         override fun createFromParcel(parcel: Parcel): Zone {
             return Zone(parcel)
@@ -52,6 +57,23 @@ class Zone() : Parcelable {
 
         override fun newArray(size: Int): Array<Zone?> {
             return arrayOfNulls(size)
+        }
+
+
+        val delimeter = "!"
+
+        fun createFromString(raw: String): Zone {
+            Log.d("zone", delimeter)
+
+            val data = raw.split(delimeter)
+
+            Log.d("zone", data.toString())
+
+            val name = data[0]
+            val latitude = data[1].toDouble()
+            val longitude = data[2].toDouble()
+
+            return Zone(name, latitude, longitude)
         }
     }
 }

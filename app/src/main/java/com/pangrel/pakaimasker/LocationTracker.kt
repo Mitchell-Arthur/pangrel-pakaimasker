@@ -16,7 +16,7 @@ interface OnLocationListener {
 
 class LocationTracker {
     private val context: Context
-    private val safeZones = ArrayList<Zone>()
+    private var safeZones = ArrayList<Zone>()
     private var lastLocation: Location? = null
     private var lastUpdated: LocalDateTime? = null
     private var listener: OnLocationListener? = null
@@ -47,10 +47,7 @@ class LocationTracker {
         this.listener = listener
     }
 
-    private fun updateLocation(location: Location) {
-        lastUpdated = LocalDateTime.now()
-        lastLocation = location
-
+    private fun calculateZones() {
         var isSafeNow = false
         if (lastLocation !== null) {
             for (zone in safeZones!!) {
@@ -62,6 +59,13 @@ class LocationTracker {
         }
 
         isSafe = isSafeNow
+    }
+
+    private fun updateLocation(location: Location) {
+        lastUpdated = LocalDateTime.now()
+        lastLocation = location
+
+        calculateZones()
 
         listener?.onUpdated(this.safeZones, this.isSafe)
 
@@ -69,24 +73,18 @@ class LocationTracker {
 
     }
 
-    fun addSafeZone(name: String, location: Location, isCurrentLocation: Boolean = true) {
-        safeZones.add(Zone(name, location.latitude, location.longitude))
+    fun updateSafeZones(zones: ArrayList<Zone>) {
+        safeZones = zones
 
-        if (isCurrentLocation) {
-            updateLocation(location)
-        }
-
-        if (safeZones.size === 1) {
-            this.startMonitor()
-        }
-    }
-
-    fun removeSafeZone(name: String) {
-        safeZones.removeIf { zone -> zone.name == name }
+        calculateZones()
 
         if (safeZones.size === 0) {
             this.stopMonitoring()
+        } else {
+            this.startMonitor()
         }
+
+        Log.d("LocationTracker", safeZones.toString())
     }
 
     fun clearSafeZone() {

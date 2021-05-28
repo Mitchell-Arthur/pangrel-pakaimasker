@@ -12,7 +12,7 @@ import android.widget.TextView
 
 class SafeZoneAdapter internal constructor(private val context: Context): BaseAdapter() {
 
-    var locations = ArrayList<String>()
+    var locations = ArrayList<Zone>()
     override fun getCount(): Int = locations.size
 
     override fun getItem(i: Int): Any = locations[i]
@@ -27,8 +27,8 @@ class SafeZoneAdapter internal constructor(private val context: Context): BaseAd
 
         val viewHolder = ViewHolder(itemView as View)
 
-        val locationName = getItem(position) as String
-        viewHolder.bind(locationName)
+        val location = getItem(position) as Zone
+        viewHolder.bind(location.name)
         viewHolder.ivDeleteSafeZone.setOnClickListener {
             locations.removeAt(position)
             notifyDataSetChanged()
