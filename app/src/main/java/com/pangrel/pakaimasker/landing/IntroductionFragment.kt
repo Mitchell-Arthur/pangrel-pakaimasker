@@ -33,11 +33,9 @@ class IntroductionFragment(private val currentPage: Int = 0) : Fragment() {
         binding.pager.currentItem = currentPage
 
         addBottomDots()
-        setCurrentDots(0)
         binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                setCurrentDots(position)
                 setCurrentDots(position)
             }
 
