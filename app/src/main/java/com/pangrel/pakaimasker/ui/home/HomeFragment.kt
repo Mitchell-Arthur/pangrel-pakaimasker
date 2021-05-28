@@ -106,16 +106,14 @@ class HomeFragment : Fragment() {
 
     fun stopMonitoring() {
         updateButtonText(false)
-
-        lastStatusLabel.visibility = View.GONE
-        tv_laststatus.visibility = View.GONE
+        lastStatusLabel.setText("")
+        tv_laststatus.setText("")
     }
 
     fun startMonitoring() {
         updateButtonText(true)
 
-        lastStatusLabel.visibility = View.VISIBLE
-        tv_laststatus.visibility = View.VISIBLE
+        lastStatusLabel.setText("Last Status :")
     }
 
     fun updateButtonText(running: Boolean) {
@@ -177,11 +175,10 @@ class HomeFragment : Fragment() {
             img_status.setImageResource(R.drawable.safezone_icon)
             tv_status.setText("You are " + safeZoneDistance + " meters from safe-zone (" + safeZoneName + ")")
 
-            lastStatusLabel.visibility = View.GONE
-            tv_laststatus.visibility = View.GONE
+            lastStatusLabel.setText("")
+            tv_laststatus.setText("")
         } else {
-            lastStatusLabel.visibility = View.VISIBLE
-            tv_laststatus.visibility = View.VISIBLE
+            lastStatusLabel.setText("Last Status :")
         }
     }
 
