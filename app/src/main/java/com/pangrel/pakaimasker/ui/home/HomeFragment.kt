@@ -106,7 +106,7 @@ class HomeFragment : Fragment() {
 
     fun stopMonitoring() {
         updateButtonText(false)
-        lastStatusLabel.setText("")
+        lastStatusLabel.setText("Waiting for action")
         tv_laststatus.setText("")
     }
 
@@ -175,7 +175,7 @@ class HomeFragment : Fragment() {
             img_status.setImageResource(R.drawable.safezone_icon)
             tv_status.setText("You are " + safeZoneDistance + " meters from safe-zone (" + safeZoneName + ")")
 
-            lastStatusLabel.setText("")
+            lastStatusLabel.setText("Waiting for action")
             tv_laststatus.setText("")
         } else {
             lastStatusLabel.setText("Last Status :")
