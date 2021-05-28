@@ -3,13 +3,11 @@ package com.pangrel.pakaimasker
 import android.Manifest
 import android.content.*
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
@@ -17,7 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.fragment_home.*
+import com.pangrel.pakaimasker.ui.home.HomeFragment
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -28,7 +26,6 @@ class HomeActivity : AppCompatActivity() {
             when (p1?.action) {
                 CamService.ACTION_PREPARED -> startMonitoring()
                 CamService.ACTION_STOPPED -> stopMonitoring()
-                CamService.ACTION_RESULT -> handleResult(p1)
             }
         }
     }
@@ -39,11 +36,8 @@ class HomeActivity : AppCompatActivity() {
         val filter = IntentFilter()
         filter.addAction(CamService.ACTION_PREPARED)
         filter.addAction(CamService.ACTION_STOPPED)
-        filter.addAction(CamService.ACTION_RESULT)
         filter.addAction(CamService.ACTION_LOCATION)
         registerReceiver(receiver, filter)
-
-        updateButtonText(isServiceRunning(this, CamService::class.java))
     }
 
     override fun onPause() {
@@ -93,16 +87,6 @@ class HomeActivity : AppCompatActivity() {
         } else if (!isLogin(getPreferences(Context.MODE_PRIVATE))){
             toLogin()
         }
-
-        btnMonitoring.setOnClickListener {
-            btnMonitoring.isEnabled = false
-            if (!isServiceRunning(this, CamService::class.java)) {
-                val intent = Intent(this, CamService::class.java)
-                startService(intent)
-            } else {
-                stopService(Intent(this, CamService::class.java))
-            }
-        }
     }
 
     private fun startCameraMonitoring() {
@@ -117,41 +101,22 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun stopMonitoring() {
-        updateButtonText(false)
+        sendBroadcast(Intent(HomeFragment.ACTION_MONITOR_OFF))
+    }
+
+    private fun updateServiceConfig() {
+        val intent = Intent(CamService.ACTION_UPDATE_CONFIG)
+
+        intent.putExtra("interval", getInterval().toLong() * 1000)
+        intent.putExtra("alert", getNotificationStatus())
+
+        sendBroadcast(intent)
     }
 
     private fun startMonitoring() {
+        this.updateServiceConfig()
         this.startCameraMonitoring()
-        updateButtonText(isServiceRunning(this, CamService::class.java))
-    }
-
-    private fun updateButtonText(running: Boolean) {
-        if (running) {
-            btnMonitoring.setText("STOP MONITORING")
-
-        } else {
-            btnMonitoring.setText("START MONITORING")
-        }
-
-        btnMonitoring.isEnabled = true
-    }
-
-    private fun handleResult(intent: Intent) {
-        val cls = intent.getIntExtra("class", -1)
-        val accuracy = intent.getDoubleExtra("accuracy", 0.0)
-
-        if (cls === ImageClassification.UNSURE) {
-            Toast.makeText(this, "INCONSISTENT RESULT", Toast.LENGTH_LONG).show()
-        }
-        if (cls === ImageClassification.NOT_FOUND) {
-            Toast.makeText(this, "NO FACE FOUND", Toast.LENGTH_LONG).show()
-        }
-        if (cls === ImageClassification.WITH_MASK) {
-            Toast.makeText(this, "MASK USED (" + (accuracy * 100).roundToInt().toString() + "%" + ")", Toast.LENGTH_LONG).show()
-        }
-        if (cls === ImageClassification.WITHOUT_MASK) {
-            Toast.makeText(this, "MASK UNUSED (" + (accuracy * 100).roundToInt().toString() + "%" + ")", Toast.LENGTH_LONG).show()
-        }
+        sendBroadcast(Intent(HomeFragment.ACTION_MONITOR_ON))
     }
 
     private fun isFirstTime(preferences: SharedPreferences): Boolean = preferences.getBoolean("isFirstTime", true)
@@ -183,6 +148,8 @@ class HomeActivity : AppCompatActivity() {
             putFloat("monitorInterval", interval)
             apply()
         }
+
+        this.updateServiceConfig()
     }
 
     fun getInterval(): Float = this.getPreferences(Context.MODE_PRIVATE).getFloat("monitorInterval", 5.0f)
@@ -230,9 +197,12 @@ class HomeActivity : AppCompatActivity() {
             putBoolean("statusMonitoring", status)
             apply()
         }
+
+
+        this.updateServiceConfig()
     }
 
-    fun getNotificationStatus(): Boolean = this.getPreferences(Context.MODE_PRIVATE).getBoolean("statusMonitoring", false)
+    fun getNotificationStatus(): Boolean = this.getPreferences(Context.MODE_PRIVATE).getBoolean("statusMonitoring", true)
 
 
     companion object {

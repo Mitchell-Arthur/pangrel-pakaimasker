@@ -29,10 +29,11 @@ class CamService() : Service() {
     private var TOTAL_CAPTURE = 7                           // 7 images to capture
     private var TOTAL_CAPUTRE_PROCESSED = 2                 // 2 images sample to processed
     private var CAPUTRE_INTERVAL = 15 * 1000L               // 15 seconds capture interval
-    private val LOCATION_INTERVAL = 15 * 1000L              // 15 seconds location updates
+    private var LOCATION_INTERVAL = 15 * 1000L              // 15 seconds location updates
     private val SMALL_DISPLACEMENT_DISTANCE: Float = 20f    // 20 meters minimum distance to update
     private val SAFEZONE_RADIUS = 50                        // 50 meters radius of safezone
     private val CONFIDENCE_THRESHOLD = 0.8                  // 80 percent minimum confidence
+    private var IS_ALERT_ENABLED = true                     // notification is shown
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -56,6 +57,7 @@ class CamService() : Service() {
         filter.addAction(ACTION_MONITOR)
         filter.addAction(ACTION_ADD_SAFEZONE)
         filter.addAction(ACTION_DEL_SAFEZONE)
+        filter.addAction(ACTION_UPDATE_CONFIG)
         registerReceiver(receiver, filter)
 
         startForeground()
@@ -93,6 +95,15 @@ class CamService() : Service() {
                         )
                     }
                     ACTION_DEL_SAFEZONE -> locationTracker?.removeSafeZone(p1.getStringExtra("name"))
+                    ACTION_UPDATE_CONFIG -> {
+                        CAPUTRE_INTERVAL = p1.getLongExtra("interval", CAPUTRE_INTERVAL)
+                        LOCATION_INTERVAL = p1.getLongExtra("interval", LOCATION_INTERVAL)
+                        IS_ALERT_ENABLED = p1.getBooleanExtra("alert", IS_ALERT_ENABLED)
+
+                        Log.d(TAG, "CAPUTRE_INTERVAL = " + CAPUTRE_INTERVAL.toString())
+                        Log.d(TAG, "LOCATION_INTERVAL = " + LOCATION_INTERVAL.toString())
+                        Log.d(TAG, "IS_ALERT_ENABLED = " + IS_ALERT_ENABLED.toString())
+                    }
                 }
             }
         }
@@ -215,7 +226,7 @@ class CamService() : Service() {
                     applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
                 val cls = intent.getIntExtra("class", -1)
-                if (cls === 1) {
+                if (cls === 1 && IS_ALERT_ENABLED) {
                     val notificationIntent = Intent(applicationContext, HomeActivity::class.java)
                     notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER)
                     notificationIntent.action = Intent.ACTION_MAIN
@@ -261,6 +272,7 @@ class CamService() : Service() {
         val ACTION_MONITOR = "pakaimasker.action.MONITOR"
         val ACTION_ADD_SAFEZONE = "pakaimasker.action.ADD_SAFEZONE"
         val ACTION_DEL_SAFEZONE = "pakaimasker.action.DEL_SAFEZONE"
+        val ACTION_UPDATE_CONFIG = "pakaimasker.action.UPDATE_CONFIG"
 
         val CHANNEL_ID = "cam_service_channel_id"
         val CHANNEL_NAME = "cam_service_channel_name"
