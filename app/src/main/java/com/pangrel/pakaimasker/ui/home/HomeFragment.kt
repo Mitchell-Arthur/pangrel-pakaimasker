@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.pangrel.pakaimasker.R
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_profile.*
 
 class HomeFragment : Fragment() {
 
@@ -27,7 +26,7 @@ class HomeFragment : Fragment() {
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth.currentUser
         tv_name.text = currentUser?.displayName
-        btnOn.setOnClickListener{
+        btnMonitoring.setOnClickListener{
 
         }
     }
