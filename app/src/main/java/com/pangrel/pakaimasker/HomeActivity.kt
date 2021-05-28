@@ -242,6 +242,8 @@ class HomeActivity : AppCompatActivity() {
         val zones = intent.getParcelableArrayListExtra<Zone>("zones")
         val safe = intent.getBooleanExtra("safe", false)
 
+        Log.d("SafeZone", safe.toString())
+
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
 
         if (safe) {

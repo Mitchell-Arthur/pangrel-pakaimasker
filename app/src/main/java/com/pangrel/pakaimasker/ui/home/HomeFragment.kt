@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,8 +28,8 @@ class HomeFragment : Fragment() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             Log.d("HomeFragment", "receive " + p1?.action)
             when (p1?.action) {
-                ACTION_MONITOR_ON -> updateButtonText(true)
-                ACTION_MONITOR_OFF -> updateButtonText(false)
+                ACTION_MONITOR_ON -> startMonitoring()
+                ACTION_MONITOR_OFF -> stopMonitoring()
                 ACTION_UPDATE_SAFEZONE -> updateSafeZoneStatus()
                 ACTION_UPDATE_RESULT -> updateClassificationResult()
             }
@@ -89,8 +90,32 @@ class HomeFragment : Fragment() {
             }
         }
 
-        updateClassificationResult()
-        updateSafeZoneStatus()
+        if (activity != null) {
+            val isRunning = isServiceRunning(activity.applicationContext, CamService::class.java)
+            updateButtonText(isRunning)
+
+
+            if (isRunning) {
+                updateClassificationResult()
+                updateSafeZoneStatus()
+            }
+        }
+
+
+    }
+
+    fun stopMonitoring() {
+        updateButtonText(false)
+
+        lastStatusLabel.visibility = View.GONE
+        tv_laststatus.visibility = View.GONE
+    }
+
+    fun startMonitoring() {
+        updateButtonText(true)
+
+        lastStatusLabel.visibility = View.VISIBLE
+        tv_laststatus.visibility = View.VISIBLE
     }
 
     fun updateButtonText(running: Boolean) {
@@ -123,21 +148,17 @@ class HomeFragment : Fragment() {
         var status = ""
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.UNSURE) {
             status = "Unsure"
-            img_status.setImageResource(R.drawable.unmasked_icon)
         }
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.NOT_FOUND) {
             status = "No Face"
-            img_status.setImageResource(R.drawable.unmasked_icon)
         }
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.WITH_MASK) {
             status = "Masked"
             img_status.setImageResource(R.drawable.masked_icon)
-            Toast.makeText(activity?.applicationContext, "MASK USED", Toast.LENGTH_LONG).show()
         }
         if (classificationResult === com.pangrel.pakaimasker.ImageClassification.WITHOUT_MASK) {
             status = "Unmasked"
             img_status.setImageResource(R.drawable.unmasked_icon)
-            Toast.makeText(activity?.applicationContext, "MASK UNUSED", Toast.LENGTH_LONG).show()
         }
 
         tv_laststatus.setText(status + " at " + dateTime.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME))
@@ -155,6 +176,12 @@ class HomeFragment : Fragment() {
             // Ini ubah mega, ubah UI kalau dia berada di SafeZone
             img_status.setImageResource(R.drawable.safezone_icon)
             tv_status.setText("You are " + safeZoneDistance + " meters from safe-zone (" + safeZoneName + ")")
+
+            lastStatusLabel.visibility = View.GONE
+            tv_laststatus.visibility = View.GONE
+        } else {
+            lastStatusLabel.visibility = View.VISIBLE
+            tv_laststatus.visibility = View.VISIBLE
         }
     }
 
