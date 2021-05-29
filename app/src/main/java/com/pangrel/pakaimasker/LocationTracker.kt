@@ -140,8 +140,8 @@ class LocationTracker {
         val locationRequest = LocationRequest()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(updateInterval)
-            .setFastestInterval(updateInterval/2)
-            .setSmallestDisplacement(smallDisplacementDistance)
+//            .setFastestInterval(updateInterval/2)
+//            .setSmallestDisplacement(smallDisplacementDistance)
 
         // Create LocationSettingsRequest object using location request
         val builder = LocationSettingsRequest.Builder()
