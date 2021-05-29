@@ -96,8 +96,8 @@ class CamService() : Service() {
                         val scheduledTimeBegin = p1.getStringArrayExtra("time").first()
                         val scheduledTimeEnd = p1.getStringArrayExtra("time").last()
 
-                        if (scheduledTimeBegin !== "") SCHEDULED_TIME_BEGIN = LocalTime.parse(scheduledTimeBegin)
-                        if (scheduledTimeEnd !== "") SCHEDULED_TIME_END = LocalTime.parse(scheduledTimeEnd)
+                        if (scheduledTimeBegin != "") SCHEDULED_TIME_BEGIN = LocalTime.parse(scheduledTimeBegin)
+                        if (scheduledTimeEnd != "") SCHEDULED_TIME_END = LocalTime.parse(scheduledTimeEnd)
 
                         Log.d(TAG, "CAPUTRE_INTERVAL = " + CAPUTRE_INTERVAL.toString())
                         Log.d(TAG, "LOCATION_INTERVAL = " + LOCATION_INTERVAL.toString())
