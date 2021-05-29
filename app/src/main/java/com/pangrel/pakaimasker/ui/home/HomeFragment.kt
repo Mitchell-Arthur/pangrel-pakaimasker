@@ -13,15 +13,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.pangrel.pakaimasker.*
+import com.pangrel.pakaimasker.R
 import kotlinx.android.synthetic.main.fragment_home.*
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 class HomeFragment : Fragment() {
-
+    private lateinit var mRef: DatabaseReference
+    private lateinit var mListener: ValueEventListener
     private lateinit var mAuth: FirebaseAuth
+
     private val receiver = object: BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             Log.d("HomeFragment", "receive " + p1?.action)
@@ -33,6 +38,9 @@ class HomeFragment : Fragment() {
         }
     }
 
+
+
+
     override fun onResume() {
         super.onResume()
 
@@ -41,12 +49,44 @@ class HomeFragment : Fragment() {
         filter.addAction(ACTION_MONITOR_OFF)
         filter.addAction(ACTION_UPDATE_RESULT)
         activity?.registerReceiver(receiver, filter)
+
+        val uid = FirebaseAuth.getInstance().uid
+
+        if (uid != null) {
+            val date = LocalDate.now().toString()
+            mRef = FirebaseDatabase.getInstance().getReference("summaries").child(uid).child(date)
+            mListener = mRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    Log.d("HomeFragment", "Memperoleh Data")
+
+                    val summary = if (dataSnapshot.value != null) dataSnapshot.value as HashMap<String, Long> else null
+                    val scanned = (summary?.get("totalScanned") ?: 0L).toInt()
+                    val masked = (summary?.get("totalMasked") ?: 0L).toInt()
+
+                    if (scanned > 0) {
+                        val percentage = Math.round((masked.toDouble() / scanned.toDouble() * 100))
+                        tv_persen.text = percentage.toString() + " %"
+                        tv_result.text = masked.toString() + " dari " + scanned.toString() + " scanning terdeteksi menggunakan masker"
+                    } else {
+                        tv_persen.text = "~ %"
+                        tv_result.text = "Belum menemukan data scanning"
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    tv_persen.text = "~ %"
+                    tv_result.text = "Terjadi kesalahan saat memperoleh data"
+                }
+            })
+        }
     }
 
     override fun onPause() {
         super.onPause()
 
         activity?.unregisterReceiver(receiver)
+        mRef.removeEventListener(mListener)
     }
 
     override fun onCreateView(
@@ -95,8 +135,6 @@ class HomeFragment : Fragment() {
                 updateResult()
             }
         }
-
-
     }
 
     fun stopMonitoring() {

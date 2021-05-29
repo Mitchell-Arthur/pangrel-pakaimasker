@@ -14,10 +14,15 @@ import androidx.core.app.NotificationCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
-import com.pangrel.pakaimasker.ui.home.HomeFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
+
 class CamService() : Service() {
+    private lateinit var database: DatabaseReference
     private var classificationModule : PyObject? = null
     private var captureHandler : CaptureHandler? = null
     private var locationTracker : LocationTracker? = null
@@ -32,7 +37,7 @@ class CamService() : Service() {
     private var CAPUTRE_INTERVAL = 15 * 1000L               // 15 seconds capture interval
     private var LOCATION_INTERVAL = 5 * 1000L              // 7.5 seconds location updates
     private val SMALL_DISPLACEMENT_DISTANCE: Float = 20f    // 20 meters minimum distance to update
-    private val SAFEZONE_RADIUS = 50                        // 50 meters radius of safezone
+    private val SAFEZONE_RADIUS = 100                        // 50 meters radius of safezone
     private val CONFIDENCE_THRESHOLD = 0.8                  // 80 percent minimum confidence
     private var IS_ALERT_ENABLED = true                     // notification is shown
 
@@ -74,6 +79,7 @@ class CamService() : Service() {
 
 
     private fun init() {
+        database = FirebaseDatabase.getInstance().getReference()
         locationTracker = LocationTracker(applicationContext, LOCATION_INTERVAL, SAFEZONE_RADIUS, SMALL_DISPLACEMENT_DISTANCE)
         captureHandler = CaptureHandler(applicationContext, TOTAL_CAPTURE, TOTAL_CAPUTRE_PROCESSED)
         receiver = object : BroadcastReceiver() {
@@ -216,15 +222,37 @@ class CamService() : Service() {
             }
 
             override fun onSuccess(result: ClassificationResult) {
+                val isPassed = result.accuracy >= CONFIDENCE_THRESHOLD
+
+                val uid = FirebaseAuth.getInstance().uid
+                if (uid != null) {
+                    val date = LocalDate.now().toString()
+                    val time = LocalTime.now().toString()
+
+                    if (result.classification == ImageClassification.WITHOUT_MASK || result.classification == ImageClassification.WITH_MASK) {
+                        val updates: MutableMap<String, Any> = HashMap()
+                        updates["summaries/$uid/$date/totalScanned"] = ServerValue.increment(1)
+                        if (result.classification == ImageClassification.WITHOUT_MASK)
+                            updates["summaries/$uid/$date/totalUnmasked"] = ServerValue.increment(1)
+                        else
+                            updates["summaries/$uid/$date/totalMasked"] = ServerValue.increment(1)
+                        updates["summaries/$uid/$date/lastUpdate"] = ServerValue.TIMESTAMP
+                        database.updateChildren(updates)
+                    }
+
+                    val scanning = Scanning(time, result, isPassed)
+                    database.child("scans").child(uid).child(date).push().setValue(scanning)
+                }
+
                 if (!isReady()) {
                     return
                 }
 
                 val intent = Intent(ACTION_RESULT)
-                intent.putExtra("image", result.image)
+//                intent.putExtra("image", result.image)
                 intent.putExtra("class", result.classification)
                 intent.putExtra("accuracy", result.accuracy)
-                intent.putExtra("passed", result.accuracy >= CONFIDENCE_THRESHOLD)
+                intent.putExtra("passed", isPassed)
                 sendBroadcast(intent)
 
                 val notificationManager =

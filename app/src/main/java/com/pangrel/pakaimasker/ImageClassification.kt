@@ -13,7 +13,7 @@ interface OnEventListener<T> {
 }
 
 interface ClassificationResult {
-    val image: ByteArray?
+//    val image: ByteArray?
     val face: Int
     val classification: Int
     val accuracy: Double
@@ -63,7 +63,7 @@ class ImageClassification : AsyncTask<MutableList<Bitmap>, Void, ClassificationR
             val endTime = System.currentTimeMillis()
 
             val output = object : ClassificationResult {
-                override val image = lastImage
+//                override val image = lastImage
                 override var face = 0
                 override var classification = UNSURE
                 override var accuracy = 1.0

@@ -7,7 +7,7 @@
     <string name="login">GET IN WITH GOOGLE</string>
     <string name="todo">TODO</string>
     <string name="_100">100%</string>
-    <string name="text_status">Current Mask Usage Status</string>
+    <string name="text_status">Current Mask Usage Today</string>
     <string name="status">100% Using a mask of 100 scans</string>
     <string name="hi">Hi,</string>
     <string name="name">Name</string>
