@@ -30,7 +30,7 @@ class CamService() : Service() {
     private var TOTAL_CAPTURE = 7                           // 7 images to capture
     private var TOTAL_CAPUTRE_PROCESSED = 2                 // 2 images sample to processed
     private var CAPUTRE_INTERVAL = 15 * 1000L               // 15 seconds capture interval
-    private var LOCATION_INTERVAL = 7.5 * 1000L              // 7.5 seconds location updates
+    private var LOCATION_INTERVAL = 5 * 1000L              // 7.5 seconds location updates
     private val SMALL_DISPLACEMENT_DISTANCE: Float = 20f    // 20 meters minimum distance to update
     private val SAFEZONE_RADIUS = 50                        // 50 meters radius of safezone
     private val CONFIDENCE_THRESHOLD = 0.8                  // 80 percent minimum confidence
@@ -90,7 +90,7 @@ class CamService() : Service() {
                     }
                     ACTION_UPDATE_CONFIG -> {
                         CAPUTRE_INTERVAL = p1.getLongExtra("interval", CAPUTRE_INTERVAL)
-                        LOCATION_INTERVAL = p1.getLongExtra("interval", LOCATION_INTERVAL * 2) / 2
+                        LOCATION_INTERVAL = (p1.getLongExtra("interval", (LOCATION_INTERVAL * 3)) / 3)
                         IS_ALERT_ENABLED = p1.getBooleanExtra("alert", IS_ALERT_ENABLED)
 
                         val scheduledTimeBegin = p1.getStringArrayExtra("time").first()
