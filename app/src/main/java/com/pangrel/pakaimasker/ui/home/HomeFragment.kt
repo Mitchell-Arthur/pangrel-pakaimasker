@@ -31,8 +31,7 @@ class HomeFragment : Fragment() {
             when (p1?.action) {
                 ACTION_MONITOR_ON -> startMonitoring()
                 ACTION_MONITOR_OFF -> stopMonitoring()
-                ACTION_UPDATE_SAFEZONE -> updateSafeZoneStatus()
-                ACTION_UPDATE_RESULT -> updateClassificationResult()
+                ACTION_UPDATE_RESULT -> updateResult()
             }
         }
     }
@@ -43,7 +42,6 @@ class HomeFragment : Fragment() {
         val filter = IntentFilter()
         filter.addAction(ACTION_MONITOR_ON)
         filter.addAction(ACTION_MONITOR_OFF)
-        filter.addAction(ACTION_UPDATE_SAFEZONE)
         filter.addAction(ACTION_UPDATE_RESULT)
         activity?.registerReceiver(receiver, filter)
     }
@@ -97,8 +95,7 @@ class HomeFragment : Fragment() {
 
 
             if (isRunning) {
-                updateClassificationResult()
-                updateSafeZoneStatus()
+                updateResult()
             }
         }
 
@@ -107,14 +104,18 @@ class HomeFragment : Fragment() {
 
     fun stopMonitoring() {
         updateButtonText(false)
-        lastStatusLabel.text = "Waiting for action"
+        img_status.setImageResource(R.drawable.bingung_icon)
+        lastStatusLabel.text = "Monitoring is Off"
         tv_laststatus.text = ""
+
+        // Mega disini perlu di reset view UInya (teks) ubah kembali ke saat belum start monitor
+        tv_status.setText("Let's start monitoring to fight againts coronavirus")
     }
 
     fun startMonitoring() {
         updateButtonText(true)
 
-        lastStatusLabel.text = "Last Status :"
+        lastStatusLabel.text = "Starting ..."
     }
 
     private fun updateButtonText(running: Boolean) {
@@ -147,58 +148,66 @@ class HomeFragment : Fragment() {
         btnMonitoring.isEnabled = true
     }
 
-    private fun updateClassificationResult() {
-        val classificationResult =
-            activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("classificationResult", ImageClassification.UNDEFINED)
-        val classificationUpdate =
-            activity?.getPreferences(Context.MODE_PRIVATE)?.getString("classificationUpdate", "")
+    private fun updateResult() {
+        val lastStatus =
+            activity?.getPreferences(Context.MODE_PRIVATE)?.getString("lastStatus", "")
+        val lastUpdate =
+            activity?.getPreferences(Context.MODE_PRIVATE)?.getString("lastUpdate", "")
 
         var dateTime = LocalDateTime.now()
 
-        if (classificationUpdate !== "") {
-            dateTime = LocalDateTime.parse(classificationUpdate)
-        }
-        Log.d("HomeFragment", dateTime.toString())
-
-
-        // Ini ubah mega, ubah UI sesuai hasil
-
-        var status = ""
-        if (classificationResult === com.pangrel.pakaimasker.ImageClassification.UNSURE) {
-            status = "Unsure"
-        }
-        if (classificationResult === com.pangrel.pakaimasker.ImageClassification.NOT_FOUND) {
-            status = "No Face"
-        }
-        if (classificationResult === com.pangrel.pakaimasker.ImageClassification.WITH_MASK) {
-            status = "Masked"
-            img_status.setImageResource(R.drawable.masked_icon)
-        }
-        if (classificationResult === com.pangrel.pakaimasker.ImageClassification.WITHOUT_MASK) {
-            status = "Unmasked"
-            img_status.setImageResource(R.drawable.unmasked_icon)
+        if (lastUpdate !== "") {
+            dateTime = LocalDateTime.parse(lastUpdate)
         }
 
-        tv_laststatus.setText(status + " at " + dateTime.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME))
-    }
+        if (lastStatus == "classification") {
+            val classificationResult =
+                activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("classificationResult", ImageClassification.UNDEFINED)
 
-    private fun updateSafeZoneStatus() {
-        val isInSafeZone =
-            activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean("isInSafeZone", false)
-        if (isInSafeZone == true) {
-            val safeZoneName =
-                activity?.getPreferences(Context.MODE_PRIVATE)?.getString("safeZoneName", "")
-            val safeZoneDistance =
-                activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("safeZoneDistance", 0)
+            tv_status.setText("")
 
-            // Ini ubah mega, ubah UI kalau dia berada di SafeZone
-            img_status.setImageResource(R.drawable.safezone_icon)
-            tv_status.setText("You are " + safeZoneDistance + " meters from safe-zone (" + safeZoneName + ")")
+            var status = ""
+            if (classificationResult === ImageClassification.UNSURE) {
+                status = "Unsure"
+            }
+            if (classificationResult === ImageClassification.NOT_FOUND) {
+                status = "No Face"
+            }
+            if (classificationResult === ImageClassification.WITH_MASK) {
+                status = "Masked"
+                img_status.setImageResource(R.drawable.masked_icon)
+                // UBAH INI MEGA
+                tv_status.setText("You not using mask")
+            }
+            if (classificationResult === ImageClassification.WITHOUT_MASK) {
+                status = "Unmasked"
+                img_status.setImageResource(R.drawable.unmasked_icon)
+                // UBAH INI MEGA
+                tv_status.setText("You are not using mask")
+            }
 
-            lastStatusLabel.setText("Waiting for action")
-            tv_laststatus.setText("")
-        } else {
             lastStatusLabel.setText("Last Status :")
+            tv_laststatus.setText(status + " at " + dateTime.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME))
+        }
+
+        if (lastStatus == "in_safezone") {
+            val zoneName = activity?.getPreferences(Context.MODE_PRIVATE)?.getString("zoneName", "")
+            val zoneDistance = activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("zoneDistance", 0)
+
+            img_status.setImageResource(R.drawable.safezone_icon)
+            tv_status.setText("You are in safe-zone (" + zoneDistance + " meters from " + zoneName + ")")
+
+            lastStatusLabel.setText("In SafeZone")
+            tv_laststatus.setText("")
+        }
+
+        if (lastStatus == "out_of_schedule") {
+            img_status.setImageResource(R.drawable.safezone_icon)
+            // UBAH INI MEGA
+            tv_status.setText("You are out of scheduled monitoring time")
+
+            lastStatusLabel.setText("Out-of-Schedule")
+            tv_laststatus.setText("")
         }
     }
 

@@ -60,7 +60,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_regular"
                             android:gravity="center_horizontal"
-                            android:text="Last Status : "
+                            android:text="Monitoring is Off"
                             android:textColor="@color/white"
                             android:textSize="8sp" />
                     </LinearLayout>
@@ -75,10 +75,9 @@
                         <TextView
                             android:id="@+id/tv_laststatus"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:fontFamily="@font/poppins_regular"
                             android:gravity="center_horizontal"
-                            android:text="-"
                             android:textColor="@color/white"
                             android:textSize="8sp" />
                     </LinearLayout>

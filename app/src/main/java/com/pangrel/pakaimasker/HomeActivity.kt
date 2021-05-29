@@ -31,8 +31,10 @@ class HomeActivity : AppCompatActivity() {
             when (p1?.action) {
                 CamService.ACTION_PREPARED -> startMonitoring()
                 CamService.ACTION_STOPPED -> stopMonitoring()
-                CamService.ACTION_LOCATION -> handleSafeZone(p1)
+//                CamService.ACTION_LOCATION -> handleSafeZone(p1)
                 CamService.ACTION_RESULT -> handleResult(p1)
+                CamService.ACTION_SKIP_SAFEZONE -> handleSkipSafeZone(p1.getParcelableExtra<Zone>("safePlace"))
+                CamService.ACTION_SKIP_SCHEDULE -> handleSkipSchedule()
             }
         }
     }
@@ -43,8 +45,10 @@ class HomeActivity : AppCompatActivity() {
         val filter = IntentFilter()
         filter.addAction(CamService.ACTION_PREPARED)
         filter.addAction(CamService.ACTION_STOPPED)
-        filter.addAction(CamService.ACTION_LOCATION)
+//        filter.addAction(CamService.ACTION_LOCATION)
         filter.addAction(CamService.ACTION_RESULT)
+        filter.addAction(CamService.ACTION_SKIP_SAFEZONE)
+        filter.addAction(CamService.ACTION_SKIP_SCHEDULE)
         registerReceiver(receiver, filter)
     }
 
@@ -119,9 +123,9 @@ class HomeActivity : AppCompatActivity() {
 
         intent1.putExtra("interval", getInterval().toLong() * 1000)
         intent1.putExtra("alert", getNotificationStatus())
+        intent1.putExtra("time", getMonitoringSchedule())
 
         sendBroadcast(intent1)
-
 
         val intent2 = Intent(CamService.ACTION_UPDATE_SAFEZONE)
         intent2.putExtra("zones", getLocation())
@@ -178,6 +182,8 @@ class HomeActivity : AppCompatActivity() {
             putString("monitorEnd", end)
             apply()
         }
+
+        this.updateServiceConfig()
     }
 
     fun setInterval(interval: Float){
@@ -253,13 +259,35 @@ class HomeActivity : AppCompatActivity() {
         if (passed) {
             val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
             with(sharedPref.edit()) {
+                putString("lastStatus", "classification")
+                putString("lastUpdate", LocalDateTime.now().toString())
                 putInt("classificationResult", cls)
-                putString("classificationUpdate", LocalDateTime.now().toString())
                 apply()
             }
         }
 
+        sendBroadcast(Intent(HomeFragment.ACTION_UPDATE_RESULT))
+    }
 
+    private fun handleSkipSafeZone(zone: Zone) {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putString("lastStatus", "in_safezone")
+            putString("lastUpdate", LocalDateTime.now().toString())
+            putString("zoneName", zone.name)
+            putInt("zoneDistance", zone.distance)
+            apply()
+        }
+        sendBroadcast(Intent(HomeFragment.ACTION_UPDATE_RESULT))
+    }
+
+    private fun handleSkipSchedule() {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putString("lastStatus", "out_of_schedule")
+            putString("lastUpdate", LocalDateTime.now().toString())
+            apply()
+        }
         sendBroadcast(Intent(HomeFragment.ACTION_UPDATE_RESULT))
     }
 

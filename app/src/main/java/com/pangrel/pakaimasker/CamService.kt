@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import com.pangrel.pakaimasker.ui.home.HomeFragment
 import java.time.LocalTime
 
 class CamService() : Service() {
@@ -60,10 +61,6 @@ class CamService() : Service() {
         registerReceiver(receiver, filter)
 
         startForeground()
-
-
-//        this.SCHEDULED_TIME_BEGIN = LocalTime.parse("06:00:00")
-//        this.SCHEDULED_TIME_END = LocalTime.parse("15:00:00")
     }
     override fun onDestroy() {
         super.onDestroy()
@@ -96,9 +93,17 @@ class CamService() : Service() {
                         LOCATION_INTERVAL = p1.getLongExtra("interval", LOCATION_INTERVAL)
                         IS_ALERT_ENABLED = p1.getBooleanExtra("alert", IS_ALERT_ENABLED)
 
+                        val scheduledTimeBegin = p1.getStringArrayExtra("time").first()
+                        val scheduledTimeEnd = p1.getStringArrayExtra("time").last()
+
+                        if (scheduledTimeBegin !== "") SCHEDULED_TIME_BEGIN = LocalTime.parse(scheduledTimeBegin)
+                        if (scheduledTimeEnd !== "") SCHEDULED_TIME_END = LocalTime.parse(scheduledTimeEnd)
+
                         Log.d(TAG, "CAPUTRE_INTERVAL = " + CAPUTRE_INTERVAL.toString())
                         Log.d(TAG, "LOCATION_INTERVAL = " + LOCATION_INTERVAL.toString())
                         Log.d(TAG, "IS_ALERT_ENABLED = " + IS_ALERT_ENABLED.toString())
+                        Log.d(TAG, "SCHEDULED_TIME_BEGIN = " + scheduledTimeBegin.toString())
+                        Log.d(TAG, "SCHEDULED_TIME_END = " + scheduledTimeEnd.toString())
                     }
                 }
             }
@@ -129,12 +134,16 @@ class CamService() : Service() {
             val now = LocalTime.now()
             if (!(SCHEDULED_TIME_BEGIN!!.isBefore(now) && SCHEDULED_TIME_END!!.isAfter(now))) {
                 Log.d(TAG, "Out of scheduled time-range")
+                sendBroadcast(Intent(ACTION_SKIP_SCHEDULE))
                 return false
             }
         }
 
         if (locationTracker?.isSafe() === true) {
             Log.d(TAG, "User is in safe-zone")
+            val intent = Intent(ACTION_SKIP_SAFEZONE)
+            intent.putExtra("safePlace", locationTracker?.getSafePlace())
+            sendBroadcast(intent)
             return false
         }
 
@@ -268,6 +277,8 @@ class CamService() : Service() {
         val ACTION_MONITOR = "pakaimasker.action.MONITOR"
         val ACTION_UPDATE_SAFEZONE = "pakaimasker.action.UPDATE_SAFEZONE"
         val ACTION_UPDATE_CONFIG = "pakaimasker.action.UPDATE_CONFIG"
+        val ACTION_SKIP_SAFEZONE = "pakaimasker.ACTION_SKIP_SAFEZONE"
+        val ACTION_SKIP_SCHEDULE = "pakaimasker.ACTION_SKIP_SCHEDULE"
 
         val CHANNEL_ID = "cam_service_channel_id"
         val CHANNEL_NAME = "cam_service_channel_name"

@@ -23,6 +23,7 @@ class LocationTracker {
     private var locationClient: FusedLocationProviderClient
     private var isStarted = false
     private var isSafe = false
+    private var safePlace: Zone? = null
     private var updateInterval: Long
     private var smallDisplacementDistance: Float
     private var safezoneRadius: Int
@@ -37,6 +38,10 @@ class LocationTracker {
 
     fun isSafe(): Boolean {
         return this.isSafe
+    }
+
+    fun getSafePlace(): Zone? {
+        return this.safePlace
     }
 
     fun getZones(): ArrayList<Zone> {
@@ -54,11 +59,16 @@ class LocationTracker {
                 if (zone.calculateDistance(lastLocation!!) <= safezoneRadius) {
                     zone.isSafe = true
                     isSafeNow = true
+                    safePlace = zone
                 }
             }
         }
 
         isSafe = isSafeNow
+
+        if (isSafe === false) {
+            safePlace = null
+        }
     }
 
     private fun updateLocation(location: Location) {
