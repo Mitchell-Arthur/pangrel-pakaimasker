@@ -138,7 +138,7 @@ class LocationTracker {
 
         // Create the location request to start receiving updates
         val locationRequest = LocationRequest()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
             .setInterval(updateInterval)
 //            .setFastestInterval(updateInterval/2)
 //            .setSmallestDisplacement(smallDisplacementDistance)
