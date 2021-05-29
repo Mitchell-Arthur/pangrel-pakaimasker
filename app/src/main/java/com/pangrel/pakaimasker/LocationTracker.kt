@@ -61,6 +61,10 @@ class LocationTracker {
                     isSafeNow = true
                     safePlace = zone
                 }
+
+
+
+                Log.d("LocationTracker", zone.name + " (" + zone.distance.toString() + ")")
             }
         }
 
@@ -93,8 +97,6 @@ class LocationTracker {
         } else {
             this.startMonitor()
         }
-
-        Log.d("LocationTracker", safeZones.toString())
     }
 
     fun clearSafeZone() {
