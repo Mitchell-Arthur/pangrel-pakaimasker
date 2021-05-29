@@ -1,10 +1,11 @@
 package com.pangrel.pakaimasker
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.pangrel.pakaimasker.databinding.ActivityLandingBinding
 import androidx.fragment.app.commit
-import com.pangrel.pakaimasker.landing.IntroductionFragment
 
 class LandingActivity : AppCompatActivity() {
 
@@ -33,6 +34,7 @@ class LandingActivity : AppCompatActivity() {
     }
 
     fun closeIntroduction() {
+        setResult(Activity.RESULT_OK)
         finish()
     }
 }

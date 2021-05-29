@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
@@ -106,22 +107,41 @@ class HomeFragment : Fragment() {
 
     fun stopMonitoring() {
         updateButtonText(false)
-        lastStatusLabel.setText("Waiting for action")
-        tv_laststatus.setText("")
+        lastStatusLabel.text = "Waiting for action"
+        tv_laststatus.text = ""
     }
 
     fun startMonitoring() {
         updateButtonText(true)
 
-        lastStatusLabel.setText("Last Status :")
+        lastStatusLabel.text = "Last Status :"
     }
 
-    fun updateButtonText(running: Boolean) {
+    private fun updateButtonText(running: Boolean) {
         if (running) {
-            btnMonitoring.setText("STOP MONITORING")
-
+            btnMonitoring.text = "STOP MONITORING"
+            val mode2 = context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)
+            when (mode2) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    btnMonitoring.setBackgroundColor(resources.getColor(R.color.purple_700))
+                }
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    btnMonitoring.setBackgroundColor(resources.getColor(R.color.teal_700))
+                }
+                Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+            }
         } else {
-            btnMonitoring.setText("START MONITORING")
+            btnMonitoring.text = "START MONITORING"
+            val mode2 = context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)
+            when (mode2) {
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    btnMonitoring.setBackgroundColor(resources.getColor(R.color.purple_200))
+                }
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    btnMonitoring.setBackgroundColor(resources.getColor(R.color.teal_200))
+                }
+                Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+            }
         }
 
         btnMonitoring.isEnabled = true

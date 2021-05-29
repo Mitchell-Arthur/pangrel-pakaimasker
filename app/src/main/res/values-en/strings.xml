@@ -36,4 +36,15 @@
     <string name="fitur_pakaimasker">Features PakaiMasker</string>
     <string name="destiga">PakaiMasker offers mask detection features, monitoring, daily summary as well as safe place mode</string>
     <string name="connect">Pair With Other Devices</string>
+    <string name="interval1">Every 5 seconds</string>
+    <string name="interval2">Every 10 seconds</string>
+    <string name="interval3">Every 15 seconds</string>
+    <string name="notif_on">Notification On</string>
+    <string name="notif_off">Notification Off</string>
+    <string name="dialog_jadwal_judul">Set Schedule</string>
+    <string name="dialog_jadwal_start">Set Start Hour</string>
+    <string name="dialog_jadwal_end">Set End Hour</string>
+    <string name="dialog_jadwal_set">Set Schedule</string>
+    <string name="dialog_jadwal_unset">Unset Schedule</string>
+    <string name="dialog_jadwal_time">Set Hour</string>
 </resources>

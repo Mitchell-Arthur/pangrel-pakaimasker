@@ -35,5 +35,15 @@
     <string name="fitur_pakaimasker">Fitur PakaiMasker</string>
     <string name="destiga">PakaiMasker menawarkan fitur pendeteksian masker, monitoring, rangkuman harian dan juga mode safe place</string>
     <string name="connect">Pasangkan Dengan Perangkat Lain</string>
-
+    <string name="interval1">Tiap 5 detik</string>
+    <string name="interval2">Tiap 10 detik</string>
+    <string name="interval3">Tiap 15 detik</string>
+    <string name="notif_on">Pemberitahuan Dinyalakan</string>
+    <string name="notif_off">Pemberitahuan Dimatikan</string>
+    <string name="dialog_jadwal_judul">Atur Jadwal</string>
+    <string name="dialog_jadwal_start">Set Jam Mulai</string>
+    <string name="dialog_jadwal_end">Set Jam Selesai</string>
+    <string name="dialog_jadwal_set">Set Jadwal</string>
+    <string name="dialog_jadwal_unset">Reset Jadwal</string>
+    <string name="dialog_jadwal_time">Set Jam</string>
 </resources>

@@ -1,12 +1,16 @@
 package com.pangrel.pakaimasker.ui.profile
 
 import android.Manifest
+import android.R.attr.button
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.RippleDrawable
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
@@ -19,7 +23,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.material.slider.Slider
@@ -30,7 +33,6 @@ import com.pangrel.pakaimasker.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class ProfileFragment : Fragment() {
@@ -57,9 +59,6 @@ class ProfileFragment : Fragment() {
             .centerCrop()
             .into(img_profile)
 
-        var timeFrom = ""
-        var timeUntil = ""
-
         btnLanguage.setOnClickListener {
             val mIntent = Intent(Settings.ACTION_LOCALE_SETTINGS)
             startActivity(mIntent)
@@ -70,35 +69,54 @@ class ProfileFragment : Fragment() {
             alert.setTitle("Apakah anda mau keluar?")
             alert.setPositiveButton("Ya") { dialog, whichButton ->
                 Firebase.auth.signOut()
+                (activity as HomeActivity).setLogin(false)
                 (activity as HomeActivity).toLogin()
             }
             alert.setNegativeButton("Tidak", null)
             alert.show()
         }
 
+        lateinit var timeFrom: String
+        lateinit var timeUntil: String
         btnJadwal.setOnClickListener {
-            val calendarfrom: Calendar = Calendar.getInstance()
+            val dialog = AlertDialog.Builder(context).create()
+            val dialogView = layoutInflater.inflate(R.layout.dialog_jadwal, null)
+            dialog.setView(dialogView)
+            dialog.setCancelable(true)
+            val btnScheduleStart = dialogView.findViewById<Button>(R.id.btn_time_start)
+            val btnScheduleEnd =  dialogView.findViewById<Button>(R.id.btn_time_end)
+            val btnSetSchedule = dialogView.findViewById<Button>(R.id.btn_set_jadwal)
+            val btnUnsetSchedule = dialogView.findViewById<Button>(R.id.btn_unset)
+
+            val calendarFrom: Calendar = Calendar.getInstance()
             val calendarUntil: Calendar = Calendar.getInstance()
+            
+            val timeFromListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                calendarFrom.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                calendarFrom.set(Calendar.MINUTE, minute)
+                val simpleDateFormat = SimpleDateFormat("HH:mm")
+                timeFrom = simpleDateFormat.format(calendarFrom.time)
+                btnScheduleStart.text = timeFrom
+                btnScheduleStart.setBackgroundColor(Color.WHITE)
+                btnScheduleStart.setTextColor(Color.BLACK)
+            }
+            val pickerFrom = TimePickerDialog(
+                context,
+                timeFromListener,
+                calendarFrom.get(Calendar.HOUR_OF_DAY),
+                calendarFrom.get(Calendar.MINUTE),
+                true
+            )
+            pickerFrom.setTitle("Start Monitoring at")
 
             val timeUntilListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                 calendarUntil.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 calendarUntil.set(Calendar.MINUTE, minute)
                 val simpleDateFormat = SimpleDateFormat("HH:mm")
                 timeUntil = simpleDateFormat.format(calendarUntil.time)
-                if (calendarUntil.time <= calendarfrom.time) {
-                    Toast.makeText(
-                        context,
-                        "waktu monitor error, waktu selesai monitor harus sesudah waktu mulai monitor",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        context,
-                        "set monitor time $timeFrom until $timeUntil",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    (activity as HomeActivity).updateMonitoringSchedule(timeFrom, timeUntil)
-                }
+                btnScheduleEnd.text = timeUntil
+                btnScheduleEnd.setBackgroundColor(Color.WHITE)
+                btnScheduleEnd.setTextColor(Color.BLACK)
             }
             val pickerUntil = TimePickerDialog(
                 context,
@@ -107,24 +125,68 @@ class ProfileFragment : Fragment() {
                 calendarUntil.get(Calendar.MINUTE),
                 true
             )
-            pickerUntil.setTitle("Jadwal Selesai Monitor")
-            pickerUntil.show()
+            pickerUntil.setTitle("End Monitoring at")
 
-            val timeFromListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                calendarfrom.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendarfrom.set(Calendar.MINUTE, minute)
-                val simpleDateFormat = SimpleDateFormat("HH:mm")
-                timeFrom = simpleDateFormat.format(calendarfrom.time)
+            btnScheduleStart.setOnClickListener {
+                pickerFrom.show()
             }
-            val pickerFrom = TimePickerDialog(
-                context,
-                timeFromListener,
-                calendarfrom.get(Calendar.HOUR_OF_DAY),
-                calendarfrom.get(Calendar.MINUTE),
-                true
-            )
-            pickerFrom.setTitle("Jadwal Mulai Monitor")
-            pickerFrom.show()
+            btnScheduleEnd.setOnClickListener {
+                pickerUntil.show()
+            }
+
+            btnSetSchedule.setOnClickListener {
+                Toast.makeText(context, "set monitor time $timeFrom until $timeUntil", Toast.LENGTH_SHORT).show()
+                (activity as HomeActivity).updateMonitoringSchedule(timeFrom, timeUntil)
+                dialog.dismiss()
+            }
+
+            btnUnsetSchedule.setOnClickListener {
+                timeFrom = ""
+                timeUntil = ""
+
+                btnScheduleStart.text = getString(R.string.dialog_jadwal_time)
+                val mode1 = context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)
+                when (mode1) {
+                    Configuration.UI_MODE_NIGHT_YES -> {
+                        btnScheduleStart.setBackgroundColor(resources.getColor(R.color.purple_200))
+                    }
+                    Configuration.UI_MODE_NIGHT_NO -> {
+                        btnScheduleStart.setBackgroundColor(resources.getColor(R.color.teal_200))
+                    }
+                    Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+                }
+                btnScheduleStart.setTextColor(Color.WHITE)
+
+                btnScheduleEnd.text = getString(R.string.dialog_jadwal_time)
+                val mode2 = context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)
+                when (mode2) {
+                    Configuration.UI_MODE_NIGHT_YES -> {
+                        btnScheduleEnd.setBackgroundColor(resources.getColor(R.color.purple_200))
+                    }
+                    Configuration.UI_MODE_NIGHT_NO -> {
+                        btnScheduleEnd.setBackgroundColor(resources.getColor(R.color.teal_200))
+                    }
+                    Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
+                }
+                btnScheduleEnd.setTextColor(Color.WHITE)
+                (activity as HomeActivity).updateMonitoringSchedule(timeFrom, timeUntil)
+            }
+
+            val timeData = (activity as HomeActivity).getMonitoringSchedule()
+            if (timeData[0] != ""){
+                timeFrom = timeData[0]!!
+                btnScheduleStart.text = timeFrom
+                btnScheduleStart.setBackgroundColor(Color.WHITE)
+                btnScheduleStart.setTextColor(Color.BLACK)
+            }
+            if (timeData[1] != ""){
+                timeUntil = timeData[1]!!
+                btnScheduleEnd.text = timeUntil
+                btnScheduleEnd.setBackgroundColor(Color.WHITE)
+                btnScheduleEnd.setTextColor(Color.BLACK)
+            }
+
+            dialog.show()
         }
 
         btnInterval.setOnClickListener {
@@ -132,22 +194,22 @@ class ProfileFragment : Fragment() {
             val dialogView = layoutInflater.inflate(R.layout.dialog_interval, null)
             dialog.setView(dialogView)
             dialog.setCancelable(true)
-            dialog.setTitle("Atur Interval")
+            dialog.setTitle("Set Interval")
 
             val sliderInterval = dialogView.findViewById<Slider>(R.id.slider_interval)
             val tvInterval = dialogView.findViewById<TextView>(R.id.tv_interval)
             val valueInterval = (activity as HomeActivity).getInterval()
             sliderInterval.value = valueInterval
             when (sliderInterval.value) {
-                5.0f -> tvInterval.text = "Tiap 5 detik"
-                10.0f -> tvInterval.text = "Tiap 10 detik"
-                15.0f -> tvInterval.text = "Tiap 15 detik"
+                5.0f -> tvInterval.text = getString(R.string.interval1)
+                10.0f -> tvInterval.text = getString(R.string.interval2)
+                15.0f -> tvInterval.text = getString(R.string.interval3)
             }
             sliderInterval.addOnChangeListener { slider, value, fromUser ->
                 when (slider.value) {
-                    5.0f -> tvInterval.text = "Tiap 5 detik"
-                    10.0f -> tvInterval.text = "Tiap 10 detik"
-                    15.0f -> tvInterval.text = "Tiap 15 detik"
+                    5.0f -> tvInterval.text = getString(R.string.interval1)
+                    10.0f -> tvInterval.text = getString(R.string.interval2)
+                    15.0f -> tvInterval.text = getString(R.string.interval3)
                 }
             }
 
@@ -223,7 +285,7 @@ class ProfileFragment : Fragment() {
         saklar.isChecked = (activity as HomeActivity).getNotificationStatus()
         saklar.setOnCheckedChangeListener { _, isChecked ->
             (activity as HomeActivity).setNotificationStatus(isChecked)
-            val message = if (isChecked) "Pemberitahuan Dinyalakan" else "Pemberitahuan Dimatikan"
+            val message = if (isChecked) getString(R.string.notif_on) else getString(R.string.notif_off)
             Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
         }
     }
@@ -275,14 +337,11 @@ class ProfileFragment : Fragment() {
                 provider: String?,
                 status: Int,
                 extras: Bundle?
-            ) {
-            }
+            ) {}
 
-            override fun onProviderEnabled(provider: String?) {
-            }
+            override fun onProviderEnabled(provider: String) {}
 
-            override fun onProviderDisabled(provider: String?) {
-            }
+            override fun onProviderDisabled(provider: String) {}
         }
 
         val criteria = Criteria()
@@ -297,5 +356,9 @@ class ProfileFragment : Fragment() {
 
 
         locationManager.requestSingleUpdate(criteria, locationListener, null)
+    }
+
+    private fun isTimeValid(){
+
     }
 }

@@ -90,10 +90,12 @@ class HomeActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        if (isFirstTime(getPreferences(Context.MODE_PRIVATE))){
-            introduction()
-        } else if (!isLogin(getPreferences(Context.MODE_PRIVATE))){
-            toLogin()
+        if (!isLogin(getPreferences(Context.MODE_PRIVATE))){
+            if (isFirstTime(getPreferences(Context.MODE_PRIVATE))){
+                introduction()
+            } else if (!isFirstTime(getPreferences(Context.MODE_PRIVATE))){
+                toLogin()
+            }
         }
     }
 
@@ -139,11 +141,34 @@ class HomeActivity : AppCompatActivity() {
             putBoolean("isFirstTime", false)
             apply()
         }
-        startActivity(Intent(this, LandingActivity::class.java).putExtra("extra_intro_page", 0))
+        startActivityForResult(Intent(this, LandingActivity::class.java).putExtra("extra_intro_page", 0), REQUEST_CODE)
     }
     private fun isLogin(preferences: SharedPreferences): Boolean = preferences.getBoolean("isLogin", false)
     fun toLogin(){
-        startActivity(Intent(this, LandingActivity::class.java).putExtra("extra_intro_page", 4))
+        startActivityForResult(Intent(this, LandingActivity::class.java).putExtra("extra_intro_page", 4), REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE) {
+            Toast.makeText(applicationContext, "berhasil", Toast.LENGTH_SHORT).show()
+            setLogin(true)
+        }
+    }
+
+    fun setLogin(status: Boolean){
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putBoolean("isLogin", status)
+            apply()
+        }
+    }
+
+    fun getMonitoringSchedule(): Array<String?> {
+        val start = this.getPreferences(Context.MODE_PRIVATE).getString("monitorStart", "")
+        val end = this.getPreferences(Context.MODE_PRIVATE).getString("monitorEnd", "")
+        return arrayOf(start, end)
     }
 
     fun updateMonitoringSchedule(start: String, end: String){
@@ -247,7 +272,7 @@ class HomeActivity : AppCompatActivity() {
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
 
         if (safe) {
-            val shortestZones = zones.sortedWith(compareBy({ it.distance })).first()
+            val shortestZones = zones.sortedWith(compareBy { it.distance }).first()
 
             with (sharedPref.edit()) {
                 putString("safeZoneName", shortestZones.name)
@@ -265,8 +290,9 @@ class HomeActivity : AppCompatActivity() {
     }
 
     companion object {
-        val CODE_PERM_CAMERA = 6112
-        val CODE_PERM_LOCATION = 6115
+        const val CODE_PERM_CAMERA = 6112
+        const val CODE_PERM_LOCATION = 6115
+        const val REQUEST_CODE = 203
     }
 
 }

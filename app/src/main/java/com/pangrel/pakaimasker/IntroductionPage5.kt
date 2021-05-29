@@ -1,13 +1,11 @@
-package com.pangrel.pakaimasker.landing
+package com.pangrel.pakaimasker
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -15,8 +13,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.pangrel.pakaimasker.LandingActivity
-import com.pangrel.pakaimasker.R
 import com.pangrel.pakaimasker.databinding.FragmentIntroductionPage5Binding
 
 @Suppress("DEPRECATION")
@@ -45,7 +41,7 @@ class IntroductionPage5 : Fragment() {
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         firebaseAuth = FirebaseAuth.getInstance()
         binding.btnLogin.setOnClickListener {
-            //(activity as LandingActivity).closeIntroduction() jangan dihapus. ini buat mitchell
+            //(activity as LandingActivity).closeIntroduction() //jangan dihapus. ini buat mitchell
             signIn()
         }
     }

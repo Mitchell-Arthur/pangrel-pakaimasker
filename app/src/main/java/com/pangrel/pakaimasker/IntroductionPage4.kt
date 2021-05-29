@@ -1,4 +1,4 @@
-package com.pangrel.pakaimasker.landing
+package com.pangrel.pakaimasker
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
