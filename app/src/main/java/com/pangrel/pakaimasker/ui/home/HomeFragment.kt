@@ -1,26 +1,23 @@
 package com.pangrel.pakaimasker.ui.home
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.Configuration
-import android.opengl.Visibility
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.pangrel.pakaimasker.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import kotlin.math.roundToInt
 
 class HomeFragment : Fragment() {
 
@@ -105,44 +102,27 @@ class HomeFragment : Fragment() {
     fun stopMonitoring() {
         updateButtonText(false)
         img_status.setImageResource(R.drawable.bingung_icon)
-        lastStatusLabel.text = "Monitoring is Off"
+        lastStatusLabel.text = getString(R.string.monitoroff)
         tv_laststatus.text = ""
 
-        // Mega disini perlu di reset view UInya (teks) ubah kembali ke saat belum start monitor
-        tv_status.setText("Let's start monitoring to fight againts coronavirus")
+        // Mega disini perlu di reset view UInya (teks) ubah kembali ke saat belum start monitor //DONE
+        tv_status.setText(getString(R.string.caption))
     }
 
     fun startMonitoring() {
         updateButtonText(true)
 
-        lastStatusLabel.text = "Starting ..."
+        lastStatusLabel.text = getString(R.string.starting)
     }
 
+    @SuppressLint("UseCompatLoadingForColorStateLists")
     private fun updateButtonText(running: Boolean) {
         if (running) {
-            btnMonitoring.text = "STOP MONITORING"
-            val mode2 = context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)
-            when (mode2) {
-                Configuration.UI_MODE_NIGHT_YES -> {
-                    btnMonitoring.setBackgroundColor(resources.getColor(R.color.purple_700))
-                }
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    btnMonitoring.setBackgroundColor(resources.getColor(R.color.teal_700))
-                }
-                Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
-            }
+            btnMonitoring.text = getString(R.string.OFF)
+            btnMonitoring.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.off)))
         } else {
-            btnMonitoring.text = "START MONITORING"
-            val mode2 = context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)
-            when (mode2) {
-                Configuration.UI_MODE_NIGHT_YES -> {
-                    btnMonitoring.setBackgroundColor(resources.getColor(R.color.purple_200))
-                }
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    btnMonitoring.setBackgroundColor(resources.getColor(R.color.teal_200))
-                }
-                Configuration.UI_MODE_NIGHT_UNDEFINED -> {}
-            }
+            btnMonitoring.text = getString(R.string.ON)
+            btnMonitoring.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.primary)))
         }
 
         btnMonitoring.isEnabled = true
@@ -168,26 +148,26 @@ class HomeFragment : Fragment() {
 
             var status = ""
             if (classificationResult === ImageClassification.UNSURE) {
-                status = "Unsure"
+                status = getString(R.string.Unsure)
             }
             if (classificationResult === ImageClassification.NOT_FOUND) {
-                status = "No Face"
+                status = getString(R.string.No_Face)
             }
             if (classificationResult === ImageClassification.WITH_MASK) {
-                status = "Masked"
+                status = getString(R.string.Masked)
                 img_status.setImageResource(R.drawable.masked_icon)
-                // UBAH INI MEGA
-                tv_status.setText("You not using mask")
+                // UBAH INI MEGA //DONE
+                tv_status.setText(getString(R.string.statusYes))
             }
             if (classificationResult === ImageClassification.WITHOUT_MASK) {
-                status = "Unmasked"
+                status = getString(R.string.Unmasked)
                 img_status.setImageResource(R.drawable.unmasked_icon)
-                // UBAH INI MEGA
-                tv_status.setText("You are not using mask")
+                // UBAH INI MEGA //DONE
+                tv_status.setText(getString(R.string.statusNo))
             }
 
-            lastStatusLabel.setText("Last Status :")
-            tv_laststatus.setText(status + " at " + dateTime.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME))
+            lastStatusLabel.setText(getString(R.string.Last_Status))
+            tv_laststatus.setText(status + " " + getString(R.string.at) + " "+ dateTime.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME))
         }
 
         if (lastStatus == "in_safezone") {
@@ -195,18 +175,18 @@ class HomeFragment : Fragment() {
             val zoneDistance = activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("zoneDistance", 0)
 
             img_status.setImageResource(R.drawable.safezone_icon)
-            tv_status.setText("You are in safe-zone (" + zoneDistance + " meters from " + zoneName + ")")
+            tv_status.setText(getString(R.string.safe) + " " + zoneDistance + " " + getString(R.string.safezo) + zoneName + ")")
 
-            lastStatusLabel.setText("In SafeZone")
+            lastStatusLabel.setText(getString(R.string.insafezone))
             tv_laststatus.setText("")
         }
 
         if (lastStatus == "out_of_schedule") {
             img_status.setImageResource(R.drawable.safezone_icon)
-            // UBAH INI MEGA
-            tv_status.setText("You are out of scheduled monitoring time")
+            // UBAH INI MEGA //UDA GINI AJA BAGUS ELAH UBAH APALAGI
+            tv_status.setText(getString(R.string.statusOut))
 
-            lastStatusLabel.setText("Out-of-Schedule")
+            lastStatusLabel.setText(getString(R.string.OutSchedule))
             tv_laststatus.setText("")
         }
     }

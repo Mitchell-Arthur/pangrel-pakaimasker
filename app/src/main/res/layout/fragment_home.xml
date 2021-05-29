@@ -126,7 +126,7 @@
                 android:layout_marginRight="30dp"
                 android:fontFamily="@font/poppins_regular"
                 android:gravity="center_horizontal"
-                android:text="@string/statusYes"
+                android:text="@string/caption"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -135,8 +135,9 @@
             android:id="@+id/btnMonitoring"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
             android:background="@drawable/bg_round"
+            android:layout_margin="20dp"
+            android:backgroundTint="@color/primary"
             android:fontFamily="@font/poppins_bold"
             android:gravity="center"
             android:padding="5dp"

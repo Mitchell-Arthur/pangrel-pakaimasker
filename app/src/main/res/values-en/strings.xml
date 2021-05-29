@@ -11,8 +11,12 @@
     <string name="status">100% Using a mask of 100 scans</string>
     <string name="hi">Hi,</string>
     <string name="name">Name</string>
-    <string name="statusNo">Please Use a Mask, or Add a Safe-Place</string>
-    <string name="statusYes">Thank you for complying with the Health Protocol. Stay Healthy and Enthusiastic !!!</string>
+    <string name="starting">Starting …</string>
+    <string name="monitoroff">Monitoring is Off</string>
+    <string name="caption">Lets start monitoring to fight againts coronavirus</string>
+    <string name="statusYes">You are wearing a mask. Stick to the health protocols and stay safe.</string>
+    <string name="statusNo">You are not wearing a mask. Please Use a Mask, or Add your current location as a Safe Place.</string>
+    <string name="statusOut">You are out of scheduled monitoring time</string>
     <string name="nama_lengkap">Full Name</string>
     <string name="email">pakaimasker@gmail.com</string>
     <string name="pengaturan">SETTINGS</string>
@@ -47,4 +51,14 @@
     <string name="dialog_jadwal_set">Set Schedule</string>
     <string name="dialog_jadwal_unset">Unset Schedule</string>
     <string name="dialog_jadwal_time">Set Hour</string>
+    <string name="Unsure">Unsure</string>
+    <string name="No_Face">No Face</string>
+    <string name="Masked">Masked</string>
+    <string name="Unmasked">Unmasked</string>
+    <string name="OutSchedule">Out-of-Schedule</string>
+    <string name="Last_Status">Last Status :</string>
+    <string name="at">at</string>
+    <string name="insafezone"> In SafeZone</string>
+    <string name="safe">You are in safe-zone (</string>
+    <string name="safezo"> meters from </string>
 </resources>
