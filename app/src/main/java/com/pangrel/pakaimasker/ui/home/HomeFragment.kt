@@ -57,8 +57,6 @@ class HomeFragment : Fragment() {
             mRef = FirebaseDatabase.getInstance().getReference("summaries").child(uid).child(date)
             mListener = mRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    Log.d("HomeFragment", "Memperoleh Data")
-
                     val summary = if (dataSnapshot.value != null) dataSnapshot.value as HashMap<String, Long> else null
                     val scanned = (summary?.get("totalScanned") ?: 0L).toInt()
                     val masked = (summary?.get("totalMasked") ?: 0L).toInt()
@@ -66,16 +64,18 @@ class HomeFragment : Fragment() {
                     if (scanned > 0) {
                         val percentage = Math.round((masked.toDouble() / scanned.toDouble() * 100))
                         tv_persen.text = percentage.toString() + " %"
+                        // Tambah multi-bahasa mega
                         tv_result.text = masked.toString() + " dari " + scanned.toString() + " scanning terdeteksi menggunakan masker"
                     } else {
                         tv_persen.text = "~ %"
+                        // Tambah multi-bahasa mega
                         tv_result.text = "Belum menemukan data scanning"
                     }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
-                    // Getting Post failed, log a message
                     tv_persen.text = "~ %"
+                    // Tambah multi-bahasa mega
                     tv_result.text = "Terjadi kesalahan saat memperoleh data"
                 }
             })
@@ -93,12 +93,10 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d("HomeFragment", "onCreateView")
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d("HomeFragment", "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
 
         val activity = getActivity()
@@ -178,11 +176,29 @@ class HomeFragment : Fragment() {
             dateTime = LocalDateTime.parse(lastUpdate)
         }
 
+        if (lastStatus == "in_safezone") {
+            val zoneName = activity?.getPreferences(Context.MODE_PRIVATE)?.getString("zoneName", "")
+            val zoneDistance = activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("zoneDistance", 0)
+
+            img_status.setImageResource(R.drawable.safezone_icon)
+            tv_status.setText(getString(R.string.safe) + " " + zoneDistance + " " + getString(R.string.safezo) + zoneName + ")")
+
+            lastStatusLabel.setText(getString(R.string.insafezone))
+            tv_laststatus.setText("")
+        }
+
+        if (lastStatus == "out_of_schedule") {
+            img_status.setImageResource(R.drawable.safezone_icon)
+            // UBAH INI MEGA //UDA GINI AJA BAGUS ELAH UBAH APALAGI
+            tv_status.setText(getString(R.string.statusOut))
+
+            lastStatusLabel.setText(getString(R.string.OutSchedule))
+            tv_laststatus.setText("")
+        }
+
         if (lastStatus == "classification") {
             val classificationResult =
                 activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("classificationResult", ImageClassification.UNDEFINED)
-
-            tv_status.setText("")
 
             var status = ""
             if (classificationResult === ImageClassification.UNSURE) {
@@ -206,26 +222,6 @@ class HomeFragment : Fragment() {
 
             lastStatusLabel.setText(getString(R.string.Last_Status))
             tv_laststatus.setText(status + " " + getString(R.string.at) + " "+ dateTime.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME))
-        }
-
-        if (lastStatus == "in_safezone") {
-            val zoneName = activity?.getPreferences(Context.MODE_PRIVATE)?.getString("zoneName", "")
-            val zoneDistance = activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("zoneDistance", 0)
-
-            img_status.setImageResource(R.drawable.safezone_icon)
-            tv_status.setText(getString(R.string.safe) + " " + zoneDistance + " " + getString(R.string.safezo) + zoneName + ")")
-
-            lastStatusLabel.setText(getString(R.string.insafezone))
-            tv_laststatus.setText("")
-        }
-
-        if (lastStatus == "out_of_schedule") {
-            img_status.setImageResource(R.drawable.safezone_icon)
-            // UBAH INI MEGA //UDA GINI AJA BAGUS ELAH UBAH APALAGI
-            tv_status.setText(getString(R.string.statusOut))
-
-            lastStatusLabel.setText(getString(R.string.OutSchedule))
-            tv_laststatus.setText("")
         }
     }
 
