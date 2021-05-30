@@ -19,6 +19,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
 import com.pangrel.pakaimasker.ui.home.HomeFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.time.LocalDateTime
@@ -105,6 +106,8 @@ class HomeActivity : AppCompatActivity() {
                 toLogin()
             }
         }
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
     }
 
     private fun startCameraMonitoring() {

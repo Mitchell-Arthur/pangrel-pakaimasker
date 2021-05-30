@@ -53,8 +53,10 @@ class HomeFragment : Fragment() {
         val uid = FirebaseAuth.getInstance().uid
 
         if (uid != null) {
+            val instance = FirebaseDatabase.getInstance()
             val date = LocalDate.now().toString()
-            mRef = FirebaseDatabase.getInstance().getReference("summaries").child(uid).child(date)
+            mRef = instance.getReference("summaries").child(uid).child(date)
+            mRef.keepSynced(true)
             mListener = mRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val summary = if (dataSnapshot.value != null) dataSnapshot.value as HashMap<String, Long> else null

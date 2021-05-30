@@ -20,7 +20,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-
 class CamService() : Service() {
     private lateinit var database: DatabaseReference
     private var classificationModule : PyObject? = null
@@ -79,7 +78,8 @@ class CamService() : Service() {
 
 
     private fun init() {
-        database = FirebaseDatabase.getInstance().getReference()
+        val instance = FirebaseDatabase.getInstance()
+        database = instance.getReference()
         locationTracker = LocationTracker(applicationContext, LOCATION_INTERVAL, SAFEZONE_RADIUS, SMALL_DISPLACEMENT_DISTANCE)
         captureHandler = CaptureHandler(applicationContext, TOTAL_CAPTURE, TOTAL_CAPUTRE_PROCESSED)
         receiver = object : BroadcastReceiver() {
