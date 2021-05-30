@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.pangrel.pakaimasker.*
@@ -142,6 +143,19 @@ class HomeFragment : Fragment() {
             if (isRunning) {
                 updateResult()
             }
+        }
+        //DUMMY NANTI HAPUS
+        val listDevice = listOf(
+            Device(imgDevice = R.drawable.safezone_icon, name = "Thor", status = "diisi apa ini wkwk", lastScan = "Last Status : Masked at 23:59:59"),
+            Device(imgDevice = R.drawable.unmasked_icon, name = "Captain America", status = "diisi apa ini wkwk", lastScan = "Last Status : Masked at 23:59:59"),
+            Device(imgDevice = R.drawable.bingung_icon, name = "Iron Man", status = "diisi apa ini wkwk", lastScan = "Last Status : Masked at 23:59:59")
+        )
+
+        val Deviceadapter = DeviceAdapter(listDevice)
+
+        rv_device.apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = Deviceadapter
         }
     }
 

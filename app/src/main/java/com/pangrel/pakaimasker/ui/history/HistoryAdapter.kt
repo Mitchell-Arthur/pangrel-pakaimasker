@@ -16,7 +16,7 @@ class HistoryAdapter (private val history: List<History>) : RecyclerView.Adapter
     override fun getItemCount(): Int = history.size
 
     override fun onBindViewHolder(holder: HistoryHolder, position: Int) {
-        holder.bindHero(history[position])
+        holder.bindHistory(history[position])
     }
 }
 
@@ -24,7 +24,7 @@ class HistoryHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val tvDate = view.tv_date
     private val tvDetail = view.tv_detail
 
-    fun bindHero(history: History) {
+    fun bindHistory(history: History) {
         tvDate.text = history.date
         tvDetail.text = history.detail
     }
