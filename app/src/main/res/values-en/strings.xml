@@ -14,7 +14,7 @@
     <string name="starting">Starting …</string>
     <string name="monitoroff">Monitoring is Off</string>
     <string name="caption">Lets start monitoring to fight againts coronavirus</string>
-    <string name="statusYes">You are wearing a mask. Stick to the health protocols and stay safe.</string>
+    <string name="statusYes">Thank you for using a mask. Stick to the health protocols and stay safe.</string>
     <string name="statusNo">You are not wearing a mask. Please Use a Mask, or Add your current location as a Safe Place.</string>
     <string name="statusOut">You are out of scheduled monitoring time</string>
     <string name="nama_lengkap">Full Name</string>

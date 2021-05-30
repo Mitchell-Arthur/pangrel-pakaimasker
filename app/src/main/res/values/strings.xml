@@ -13,7 +13,7 @@
     <string name="starting">Memulai…</string>
     <string name="monitoroff">Monitoring mati</string>
     <string name="caption">Mari mulai monitoring untuk melawan virus corona</string>
-    <string name="statusYes">Anda menggunakan masker. Tetap patuh pada protokol kesehatan dan stay safe.</string>
+    <string name="statusYes">Terimakasih telah menggunakan masker. Tetap patuh pada protokol kesehatan dan stay safe.</string>
     <string name="statusNo">Anda tidak menggunakan masker. Silakan Gunakan Masker, atau Tandai lokasi Anda saat ini sebagai Safezone.</string>
     <string name="statusOut">Anda diluar waktu monitoring yang dijadwalkan</string>
     <string name="nama_lengkap">Nama Lengkap</string>

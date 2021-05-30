@@ -38,9 +38,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-
-
-
     override fun onResume() {
         super.onResume()
 
@@ -128,7 +125,6 @@ class HomeFragment : Fragment() {
             val isRunning = isServiceRunning(activity.applicationContext, CamService::class.java)
             updateButtonText(isRunning)
 
-
             if (isRunning) {
                 updateResult()
             }
@@ -160,7 +156,6 @@ class HomeFragment : Fragment() {
             btnMonitoring.text = getString(R.string.ON)
             btnMonitoring.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.primary)))
         }
-
         btnMonitoring.isEnabled = true
     }
 

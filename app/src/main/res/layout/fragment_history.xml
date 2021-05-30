@@ -60,7 +60,7 @@
                         android:textFontWeight="600"
                         android:text="@string/text_status"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:targetApi="p" />
 
                     <TextView
@@ -70,7 +70,7 @@
                         android:fontFamily="@font/poppins_regular"
                         android:text="@string/status"
                         android:textColor="@color/black"
-                        android:textSize="15sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -82,7 +82,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="60dp"
             android:background="@drawable/vie_bg"
-            android:padding="15dp">
+            android:padding="10dp">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_history"
                 android:layout_width="match_parent"
