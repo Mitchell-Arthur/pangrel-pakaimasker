@@ -60,7 +60,9 @@
     <string name="insafezone"> Di SafeZone</string>
     <string name="safe">Anda berada di zona aman (</string>
     <string name="safezo"> meter dari </string>
-
+    <string name="dialog_pasangkan_perangkat">Pasangkan Perangkat</string>
+    <string name="dialog_add">Masukkan Device code</string>
+    <string name="dialog_addd">Tambahkan</string>
 
 
 </resources>

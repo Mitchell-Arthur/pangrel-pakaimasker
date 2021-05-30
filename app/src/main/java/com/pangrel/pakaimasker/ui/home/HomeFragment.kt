@@ -1,6 +1,7 @@
 package com.pangrel.pakaimasker.ui.home
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -11,12 +12,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.pangrel.pakaimasker.*
 import com.pangrel.pakaimasker.R
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_profile.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -104,6 +107,16 @@ class HomeFragment : Fragment() {
         val firstName = fullName?.split(" ")?.first()
         tv_name.text = firstName
 
+        btnConnectDevice.setOnClickListener {
+            val dialog = AlertDialog.Builder(context).create()
+            val dialogView = layoutInflater.inflate(R.layout.dialog_connect, null)
+            dialog.setView(dialogView)
+            dialog.setCancelable(true)
+            val btnAdd = dialogView.findViewById<Button>(R.id.btn_add)
+
+            dialog.show()
+        }
+
         if (activity != null) {
             updateButtonText(isServiceRunning(activity.applicationContext, CamService::class.java))
         }
@@ -120,7 +133,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
         if (activity != null) {
             val isRunning = isServiceRunning(activity.applicationContext, CamService::class.java)
             updateButtonText(isRunning)
