@@ -29,8 +29,8 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 class HomeFragment : Fragment() {
-    private lateinit var mRef: DatabaseReference
-    private lateinit var mListener: ValueEventListener
+    private var mRef: DatabaseReference? = null
+    private var mListener: ValueEventListener? = null
     private lateinit var mAuth: FirebaseAuth
 
     private val receiver = object : BroadcastReceiver() {
@@ -59,8 +59,8 @@ class HomeFragment : Fragment() {
             val instance = FirebaseDatabase.getInstance()
             val date = LocalDate.now().toString()
             mRef = instance.getReference("summaries").child(uid).child(date)
-            mRef.keepSynced(true)
-            mListener = mRef.addValueEventListener(object : ValueEventListener {
+            mRef?.keepSynced(true)
+            mListener = mRef?.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val summary =
                         if (dataSnapshot.value != null) dataSnapshot.value as HashMap<String, Long> else null
@@ -93,7 +93,7 @@ class HomeFragment : Fragment() {
         super.onPause()
 
         activity?.unregisterReceiver(receiver)
-        mRef.removeEventListener(mListener)
+        mListener?.let { mRef?.removeEventListener(it) }
     }
 
     override fun onCreateView(
