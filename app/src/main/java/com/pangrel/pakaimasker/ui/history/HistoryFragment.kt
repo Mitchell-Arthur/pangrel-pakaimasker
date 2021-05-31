@@ -51,10 +51,10 @@ class HistoryFragment : Fragment() {
                             val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.getDefault())
                             val date = LocalDate.parse(key)
                             if (date.isEqual(today) == false)
+                                // Tambah multi-bahasa mega
                                 listHistory.add(History(date = date.format(formatter).toString(), detail = "$percentage% menggunakan masker dari $scanned scanning"))
                             else {
                                 tv_persen.text = percentage.toString() + " %"
-                                // Tambah multi-bahasa mega
                                 tv_result.text = masked.toString() + " dari " + scanned.toString() + " scanning terdeteksi menggunakan masker"
                             }
                         }

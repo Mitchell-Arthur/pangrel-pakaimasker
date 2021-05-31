@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.slider.Slider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.pangrel.pakaimasker.*
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -38,6 +39,24 @@ import java.util.*
 class ProfileFragment : Fragment() {
 
     private lateinit var mAuth: FirebaseAuth
+
+    override fun onResume() {
+        super.onResume()
+
+        val uid = FirebaseAuth.getInstance().uid
+
+        if (uid != null) {
+            FirebaseDatabase.getInstance().getReference("/users/" + uid + "/code").get().addOnSuccessListener {
+                tv_devicecode.text = it.value.toString()
+            }.addOnFailureListener{
+                tv_devicecode.text = "-"
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
