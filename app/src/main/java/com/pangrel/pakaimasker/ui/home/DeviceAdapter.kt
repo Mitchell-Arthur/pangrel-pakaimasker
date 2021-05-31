@@ -1,5 +1,6 @@
 package com.pangrel.pakaimasker.ui.home
 
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,8 @@ class DeviceAdapter (private val device: List<Device>) : RecyclerView.Adapter<De
     override fun getItemCount(): Int = device.size
 
     override fun onBindViewHolder(holder: DeviceHolder, position: Int) {
+        device[position].position = position
+        device[position].adapter = this
         holder.bindDevice(device[position])
     }
 }
@@ -37,9 +40,11 @@ class DeviceHolder(view: View) : RecyclerView.ViewHolder(view) {
         tvNama.text = device.name
         tvStatus.text = device.status
         tvLastScan.text = device.lastScan
-//        Glide.with(itemView.context)
-//            .load(device.imgDevice)
-//            .apply(RequestOptions().override(250, 250))
-//            .into(imgDevice)
+        tvStatus.setTextColor(device.color)
+        if (device.image != null)
+            Glide.with(itemView.context)
+                .load(Base64.decode(device.image, Base64.DEFAULT))
+                .apply(RequestOptions().override(250, 250))
+                .into(imgDevice)
     }
 }
