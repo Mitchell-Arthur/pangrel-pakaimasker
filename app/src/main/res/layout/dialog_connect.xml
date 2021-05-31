@@ -25,7 +25,7 @@
         android:background="@drawable/bg_strokedialog"
         android:layout_margin="20dp"
         android:fontFamily="@font/poppins_regular"
-        android:text="@string/dialog_add"
+        android:hint="@string/dialog_add"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@+id/textView9"
         app:layout_constraintHorizontal_bias="0.5"

@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
@@ -116,8 +117,11 @@ class HomeFragment : Fragment() {
             dialog.setView(dialogView)
             dialog.setCancelable(true)
             val btnAdd = dialogView.findViewById<Button>(R.id.btn_add)
-
             dialog.show()
+            btnAdd .setOnClickListener {
+                Toast.makeText(context, "Device Code Berhasil Ditambahkan", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
         }
 
         if (activity != null) {
