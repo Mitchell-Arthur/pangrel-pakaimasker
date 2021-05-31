@@ -240,8 +240,9 @@ class CamService() : Service() {
                         database.updateChildren(updates)
                     }
 
-                    val scanning = Scanning(time, result, isPassed)
-                    database.child("scans").child(uid).child(date).push().setValue(scanning)
+                    database.child("scans").child(uid).child(date).push().setValue(Scanning(time, result, isPassed))
+                    if (isPassed && (result.classification == ImageClassification.WITH_MASK || result.classification == ImageClassification.WITHOUT_MASK))
+                        database.child("lasts").child(uid).setValue(LastScan(LocalDateTime.now().toString(), result.classification == ImageClassification.WITH_MASK))
                 }
 
                 if (!isReady()) {

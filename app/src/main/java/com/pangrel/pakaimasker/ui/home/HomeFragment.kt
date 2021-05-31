@@ -163,6 +163,29 @@ class HomeFragment : Fragment() {
         }
     }
 
+    fun addDevice() {
+        val deviceCode = "JDJ3DD".toUpperCase() // dummy, isi sama yang user input
+        val uid = FirebaseAuth.getInstance().uid
+
+        FirebaseDatabase.getInstance().getReference("/codes/" + deviceCode).get()
+            .addOnSuccessListener {
+                if (it.exists() == false) {
+                    // Mega isi ketika gk ketemu, kasih toast berisi pesan device code tida kditemukan
+                } else {
+                    if (it.value == uid) {
+                        // Mega kasih toast error
+                    } else {
+                        FirebaseDatabase.getInstance()
+                            .getReference("/pairs/" + uid + "/" + deviceCode).setValue(true)
+
+                        // Tutup dialognya meg
+                    }
+                }
+            }.addOnFailureListener {
+            // Mega kasih toast error
+        }
+    }
+
     fun stopMonitoring() {
         updateButtonText(false)
         img_status.setImageResource(R.drawable.bingung_icon)
