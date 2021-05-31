@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +23,7 @@ import com.pangrel.pakaimasker.CamService
 import com.pangrel.pakaimasker.ImageClassification
 import com.pangrel.pakaimasker.R
 import com.pangrel.pakaimasker.isServiceRunning
+import kotlinx.android.synthetic.main.dialog_connect.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -120,9 +122,10 @@ class HomeFragment : Fragment() {
             dialog.setView(dialogView)
             dialog.setCancelable(true)
             val btnAdd = dialogView.findViewById<Button>(R.id.btn_add)
+            val etConnect = dialogView.findViewById<EditText>(R.id.et_connect)
             dialog.show()
             btnAdd.setOnClickListener {
-                val deviceCode = "JDJ3DD".toUpperCase() // dummy, isi sama yang user input
+                val deviceCode = etConnect.text.toString().toUpperCase() // dummy, isi sama yang user input
                 val uid = FirebaseAuth.getInstance().uid
                 FirebaseDatabase.getInstance().getReference("/codes/" + deviceCode).get()
                     .addOnSuccessListener {
@@ -213,10 +216,6 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(activity)
             adapter = Deviceadapter
         }
-    }
-
-    fun addDevice() {
-
     }
 
     fun stopMonitoring() {
