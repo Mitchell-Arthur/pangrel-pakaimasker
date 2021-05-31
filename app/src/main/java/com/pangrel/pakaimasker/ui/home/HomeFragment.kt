@@ -18,10 +18,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.pangrel.pakaimasker.*
+import com.pangrel.pakaimasker.CamService
+import com.pangrel.pakaimasker.ImageClassification
 import com.pangrel.pakaimasker.R
+import com.pangrel.pakaimasker.isServiceRunning
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_profile.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -32,7 +33,7 @@ class HomeFragment : Fragment() {
     private lateinit var mListener: ValueEventListener
     private lateinit var mAuth: FirebaseAuth
 
-    private val receiver = object: BroadcastReceiver() {
+    private val receiver = object : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             Log.d("HomeFragment", "receive " + p1?.action)
             when (p1?.action) {
@@ -61,7 +62,8 @@ class HomeFragment : Fragment() {
             mRef.keepSynced(true)
             mListener = mRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val summary = if (dataSnapshot.value != null) dataSnapshot.value as HashMap<String, Long> else null
+                    val summary =
+                        if (dataSnapshot.value != null) dataSnapshot.value as HashMap<String, Long> else null
                     val scanned = (summary?.get("totalScanned") ?: 0L).toInt()
                     val masked = (summary?.get("totalMasked") ?: 0L).toInt()
 
@@ -69,7 +71,8 @@ class HomeFragment : Fragment() {
                         val percentage = Math.round((masked.toDouble() / scanned.toDouble() * 100))
                         tv_persen.text = percentage.toString() + " %"
                         // Tambah multi-bahasa mega
-                        tv_result.text = masked.toString() + " dari " + scanned.toString() + " scanning terdeteksi menggunakan masker"
+                        tv_result.text =
+                            masked.toString() + " dari " + scanned.toString() + " scanning terdeteksi menggunakan masker"
                     } else {
                         tv_persen.text = "~ %"
                         // Tambah multi-bahasa mega
@@ -118,9 +121,38 @@ class HomeFragment : Fragment() {
             dialog.setCancelable(true)
             val btnAdd = dialogView.findViewById<Button>(R.id.btn_add)
             dialog.show()
-            btnAdd .setOnClickListener {
-                Toast.makeText(context, "Device Code Berhasil Ditambahkan", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
+            btnAdd.setOnClickListener {
+                val deviceCode = "JDJ3DD".toUpperCase() // dummy, isi sama yang user input
+                val uid = FirebaseAuth.getInstance().uid
+                FirebaseDatabase.getInstance().getReference("/codes/" + deviceCode).get()
+                    .addOnSuccessListener {
+                        if (it.exists() == false) {
+                            // Mega isi ketika gk ketemu, kasih toast berisi pesan device code tida kditemukan
+                            Toast.makeText(
+                                context,
+                                "Device Code Tidak ditemukan",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            if (it.value == uid) {
+                                // Mega kasih toast error
+                                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                            } else {
+                                FirebaseDatabase.getInstance()
+                                    .getReference("/pairs/" + uid + "/" + deviceCode).setValue(true)
+                                Toast.makeText(
+                                    context,
+                                    "Device Code Berhasil Ditambahkan",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                // Tutup dialognya meg
+                                dialog.dismiss()
+                            }
+                        }
+                    }.addOnFailureListener {
+                        // Mega kasih toast error
+                        Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                    }
             }
         }
 
@@ -128,7 +160,7 @@ class HomeFragment : Fragment() {
             updateButtonText(isServiceRunning(activity.applicationContext, CamService::class.java))
         }
 
-        btnMonitoring.setOnClickListener{
+        btnMonitoring.setOnClickListener {
             btnMonitoring.isEnabled = false
 
             if (activity !== null) {
@@ -136,7 +168,12 @@ class HomeFragment : Fragment() {
                     val intent = Intent(activity.applicationContext, CamService::class.java)
                     activity.startService(intent)
                 } else {
-                    activity.stopService(Intent(activity.applicationContext, CamService::class.java))
+                    activity.stopService(
+                        Intent(
+                            activity.applicationContext,
+                            CamService::class.java
+                        )
+                    )
                 }
             }
         }
@@ -150,9 +187,24 @@ class HomeFragment : Fragment() {
         }
         //DUMMY NANTI HAPUS
         val listDevice = listOf(
-            Device(imgDevice = R.drawable.safezone_icon, name = "Thor", status = "diisi apa ini wkwk", lastScan = "Last Status : Masked at 23:59:59"),
-            Device(imgDevice = R.drawable.unmasked_icon, name = "Captain America", status = "diisi apa ini wkwk", lastScan = "Last Status : Masked at 23:59:59"),
-            Device(imgDevice = R.drawable.bingung_icon, name = "Iron Man", status = "diisi apa ini wkwk", lastScan = "Last Status : Masked at 23:59:59")
+            Device(
+                imgDevice = R.drawable.safezone_icon,
+                name = "Thor",
+                status = "diisi apa ini wkwk",
+                lastScan = "Last Status : Masked at 23:59:59"
+            ),
+            Device(
+                imgDevice = R.drawable.unmasked_icon,
+                name = "Captain America",
+                status = "diisi apa ini wkwk",
+                lastScan = "Last Status : Masked at 23:59:59"
+            ),
+            Device(
+                imgDevice = R.drawable.bingung_icon,
+                name = "Iron Man",
+                status = "diisi apa ini wkwk",
+                lastScan = "Last Status : Masked at 23:59:59"
+            )
         )
 
         val Deviceadapter = DeviceAdapter(listDevice)
@@ -164,26 +216,7 @@ class HomeFragment : Fragment() {
     }
 
     fun addDevice() {
-        val deviceCode = "JDJ3DD".toUpperCase() // dummy, isi sama yang user input
-        val uid = FirebaseAuth.getInstance().uid
 
-        FirebaseDatabase.getInstance().getReference("/codes/" + deviceCode).get()
-            .addOnSuccessListener {
-                if (it.exists() == false) {
-                    // Mega isi ketika gk ketemu, kasih toast berisi pesan device code tida kditemukan
-                } else {
-                    if (it.value == uid) {
-                        // Mega kasih toast error
-                    } else {
-                        FirebaseDatabase.getInstance()
-                            .getReference("/pairs/" + uid + "/" + deviceCode).setValue(true)
-
-                        // Tutup dialognya meg
-                    }
-                }
-            }.addOnFailureListener {
-            // Mega kasih toast error
-        }
     }
 
     fun stopMonitoring() {
@@ -228,7 +261,8 @@ class HomeFragment : Fragment() {
 
         if (lastStatus == "in_safezone") {
             val zoneName = activity?.getPreferences(Context.MODE_PRIVATE)?.getString("zoneName", "")
-            val zoneDistance = activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("zoneDistance", 0)
+            val zoneDistance =
+                activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("zoneDistance", 0)
 
             img_status.setImageResource(R.drawable.safezone_icon)
             tv_status.setText(getString(R.string.safe) + " " + zoneDistance + " " + getString(R.string.safezo) + zoneName + ")")
@@ -248,7 +282,8 @@ class HomeFragment : Fragment() {
 
         if (lastStatus == "classification") {
             val classificationResult =
-                activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("classificationResult", ImageClassification.UNDEFINED)
+                activity?.getPreferences(Context.MODE_PRIVATE)
+                    ?.getInt("classificationResult", ImageClassification.UNDEFINED)
 
             var status = ""
             if (classificationResult === ImageClassification.UNSURE) {
@@ -271,7 +306,11 @@ class HomeFragment : Fragment() {
             }
 
             lastStatusLabel.setText(getString(R.string.Last_Status))
-            tv_laststatus.setText(status + " " + getString(R.string.at) + " "+ dateTime.truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME))
+            tv_laststatus.setText(
+                status + " " + getString(R.string.at) + " " + dateTime.truncatedTo(
+                    ChronoUnit.SECONDS
+                ).format(DateTimeFormatter.ISO_LOCAL_TIME)
+            )
         }
     }
 
