@@ -19,8 +19,8 @@ import java.util.*
 
 
 class HistoryFragment : Fragment() {
-    private lateinit var mRef: DatabaseReference
-    private lateinit var mListener: ValueEventListener
+    private var mRef: DatabaseReference? = null
+    private var mListener: ValueEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,8 +36,8 @@ class HistoryFragment : Fragment() {
         if (uid != null) {
             val instance = FirebaseDatabase.getInstance()
             mRef = instance.getReference("summaries").child(uid)
-            mRef.keepSynced(true)
-            mListener = mRef.addValueEventListener(object : ValueEventListener {
+            mRef?.keepSynced(true)
+            mListener = mRef?.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val values = dataSnapshot.value as HashMap<String, Any>?
                     if (values != null) {
@@ -77,7 +77,7 @@ class HistoryFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        mRef.removeEventListener(mListener)
+        mListener?.let { mRef?.removeEventListener(it) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
