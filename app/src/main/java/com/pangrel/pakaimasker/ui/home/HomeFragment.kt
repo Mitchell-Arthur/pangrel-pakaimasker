@@ -31,8 +31,11 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 class HomeFragment : Fragment() {
+    private var pairedDevices : MutableMap<String, Device> = mutableMapOf()
     private var mRef: DatabaseReference? = null
     private var mListener: ValueEventListener? = null
+    private var mPairRef: DatabaseReference? = null
+    private var mPairListener: ValueEventListener? = null
     private lateinit var mAuth: FirebaseAuth
 
     private val receiver = object : BroadcastReceiver() {
@@ -59,6 +62,34 @@ class HomeFragment : Fragment() {
 
         if (uid != null) {
             val instance = FirebaseDatabase.getInstance()
+
+            mPairRef = instance.getReference("pairs").child(uid)
+            mPairRef?.keepSynced(true)
+            mPairListener = mPairRef?.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val pairs =
+                        if (dataSnapshot.value != null) dataSnapshot.value as HashMap<String, Boolean> else null
+                    if (pairs != null) {
+                        for ((uid, _) in pairs) {
+                            if (pairedDevices.containsKey(uid) == false) {
+                                pairedDevices.put(uid, Device(uid))
+                            }
+                        }
+
+                        val Deviceadapter = DeviceAdapter(pairedDevices.values.toList())
+
+                        rv_device.apply {
+                            layoutManager = LinearLayoutManager(activity)
+                            adapter = Deviceadapter
+                        }
+                    }
+
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                }
+            })
+
             val date = LocalDate.now().toString()
             mRef = instance.getReference("summaries").child(uid).child(date)
             mRef?.keepSynced(true)
@@ -96,6 +127,12 @@ class HomeFragment : Fragment() {
 
         activity?.unregisterReceiver(receiver)
         mListener?.let { mRef?.removeEventListener(it) }
+        mPairListener?.let { mPairRef?.removeEventListener(it) }
+
+        pairedDevices.forEach {
+            it.value.destroy()
+        }
+        pairedDevices.clear()
     }
 
     override fun onCreateView(
@@ -125,10 +162,13 @@ class HomeFragment : Fragment() {
             val etConnect = dialogView.findViewById<EditText>(R.id.et_connect)
             dialog.show()
             btnAdd.setOnClickListener {
-                val deviceCode = etConnect.text.toString().toUpperCase() // dummy, isi sama yang user input
+                val deviceCode = etConnect.text.toString().toUpperCase()
+                println(deviceCode)
                 val uid = FirebaseAuth.getInstance().uid
+                btnAdd.isEnabled = false
                 FirebaseDatabase.getInstance().getReference("/codes/" + deviceCode).get()
                     .addOnSuccessListener {
+                        btnAdd.isEnabled = true
                         if (it.exists() == false) {
                             // Mega isi ketika gk ketemu, kasih toast berisi pesan device code tida kditemukan
                             Toast.makeText(
@@ -142,7 +182,7 @@ class HomeFragment : Fragment() {
                                 Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
                             } else {
                                 FirebaseDatabase.getInstance()
-                                    .getReference("/pairs/" + uid + "/" + deviceCode).setValue(true)
+                                    .getReference("/pairs/" + uid + "/" + it.value).setValue(true)
                                 Toast.makeText(
                                     context,
                                     "Device Code Berhasil Ditambahkan",
@@ -153,6 +193,7 @@ class HomeFragment : Fragment() {
                             }
                         }
                     }.addOnFailureListener {
+                        btnAdd.isEnabled = true
                         // Mega kasih toast error
                         Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
                     }
@@ -187,34 +228,6 @@ class HomeFragment : Fragment() {
             if (isRunning) {
                 updateResult()
             }
-        }
-        //DUMMY NANTI HAPUS
-        val listDevice = listOf(
-            Device(
-                imgDevice = R.drawable.safezone_icon,
-                name = "Thor",
-                status = "diisi apa ini wkwk",
-                lastScan = "Last Status : Masked at 23:59:59"
-            ),
-            Device(
-                imgDevice = R.drawable.unmasked_icon,
-                name = "Captain America",
-                status = "diisi apa ini wkwk",
-                lastScan = "Last Status : Masked at 23:59:59"
-            ),
-            Device(
-                imgDevice = R.drawable.bingung_icon,
-                name = "Iron Man",
-                status = "diisi apa ini wkwk",
-                lastScan = "Last Status : Masked at 23:59:59"
-            )
-        )
-
-        val Deviceadapter = DeviceAdapter(listDevice)
-
-        rv_device.apply {
-            layoutManager = LinearLayoutManager(activity)
-            adapter = Deviceadapter
         }
     }
 

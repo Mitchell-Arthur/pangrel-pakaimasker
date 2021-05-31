@@ -37,9 +37,9 @@ class DeviceHolder(view: View) : RecyclerView.ViewHolder(view) {
         tvNama.text = device.name
         tvStatus.text = device.status
         tvLastScan.text = device.lastScan
-        Glide.with(itemView.context)
-            .load(device.imgDevice)
-            .apply(RequestOptions().override(250, 250))
-            .into(imgDevice)
+//        Glide.with(itemView.context)
+//            .load(device.imgDevice)
+//            .apply(RequestOptions().override(250, 250))
+//            .into(imgDevice)
     }
 }
