@@ -78,5 +78,6 @@
     <string name="schedule.1">set monitoring time</string>
     <string name="schedule.2">until</string>
     <string name="gps.must.active">GPS must be active!</string>
+    <string name="monitoring_is_off">Monitoring is Off</string>
 
 </resources>

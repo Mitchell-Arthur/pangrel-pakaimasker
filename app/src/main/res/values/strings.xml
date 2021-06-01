@@ -77,5 +77,5 @@
     <string name="schedule.1">set jam monitoring pada</string>
     <string name="schedule.2">hingga</string>
     <string name="gps.must.active">GPS harus aktif</string>
-
+    <string name="monitoring_is_off">Monitoring Mati</string>
 </resources>
