@@ -21,7 +21,7 @@ class IntroductionPage5 : Fragment() {
         private const val RC_SIGN_IN = 120
     }
     private lateinit var googleSignInClient: GoogleSignInClient
-    var firebaseAuth = FirebaseAuth.getInstance()
+    private var firebaseAuth = FirebaseAuth.getInstance()
 
     private lateinit var binding: FragmentIntroductionPage5Binding
     override fun onCreateView(
@@ -41,7 +41,6 @@ class IntroductionPage5 : Fragment() {
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         firebaseAuth = FirebaseAuth.getInstance()
         binding.btnLogin.setOnClickListener {
-            //(activity as LandingActivity).closeIntroduction() //jangan dihapus. ini buat mitchell
             signIn()
         }
     }

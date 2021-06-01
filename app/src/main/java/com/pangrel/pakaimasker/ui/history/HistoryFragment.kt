@@ -50,12 +50,12 @@ class HistoryFragment : Fragment() {
                             val percentage = Math.round((masked.toDouble() / scanned.toDouble() * 100))
                             val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.getDefault())
                             val date = LocalDate.parse(key)
-                            if (date.isEqual(today) == false)
-                                // Tambah multi-bahasa mega
+                            if (!date.isEqual(today))
                                 listHistory.add(History(date = date.format(formatter).toString(), detail = "$percentage% menggunakan masker dari $scanned scanning"))
                             else {
-                                tv_persen.text = percentage.toString() + " %"
-                                tv_result.text = masked.toString() + " dari " + scanned.toString() + " scanning terdeteksi menggunakan masker"
+                                tv_persen.text = "$percentage %"
+                                tv_result.text =
+                                    "$masked dari $scanned scanning terdeteksi menggunakan masker"
                             }
                         }
 

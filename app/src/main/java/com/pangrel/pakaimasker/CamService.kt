@@ -34,9 +34,9 @@ class CamService() : Service() {
     private var TOTAL_CAPTURE = 7                           // 7 images to capture
     private var TOTAL_CAPUTRE_PROCESSED = 2                 // 2 images sample to processed
     private var CAPUTRE_INTERVAL = 15 * 1000L               // 15 seconds capture interval
-    private var LOCATION_INTERVAL = 5 * 1000L              // 7.5 seconds location updates
+    private var LOCATION_INTERVAL = 5 * 1000L               // 7.5 seconds location updates
     private val SMALL_DISPLACEMENT_DISTANCE: Float = 20f    // 20 meters minimum distance to update
-    private val SAFEZONE_RADIUS = 100                        // 50 meters radius of safezone
+    private val SAFEZONE_RADIUS = 100                       // 50 meters radius of safezone
     private val CONFIDENCE_THRESHOLD = 0.8                  // 80 percent minimum confidence
     private var IS_ALERT_ENABLED = true                     // notification is shown
 
@@ -88,10 +88,6 @@ class CamService() : Service() {
                 when (p1?.action) {
                     ACTION_MONITOR -> startMonitoring()
                     ACTION_UPDATE_SAFEZONE -> {
-//                        val notificationManager =
-//                            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//                        notificationManager.cancel(REMINDER_NOTIFICATION_ID)
-
                         locationTracker?.updateSafeZones(p1.getParcelableArrayListExtra<Zone>("zones"))
                     }
                     ACTION_UPDATE_CONFIG -> {
@@ -105,22 +101,20 @@ class CamService() : Service() {
                         SCHEDULED_TIME_BEGIN = if (scheduledTimeBegin != "") LocalTime.parse(scheduledTimeBegin) else null
                         SCHEDULED_TIME_END = if (scheduledTimeEnd != "") LocalTime.parse(scheduledTimeEnd) else null
 
-                        Log.d(TAG, "CAPUTRE_INTERVAL = " + CAPUTRE_INTERVAL.toString())
-                        Log.d(TAG, "LOCATION_INTERVAL = " + LOCATION_INTERVAL.toString())
-                        Log.d(TAG, "IS_ALERT_ENABLED = " + IS_ALERT_ENABLED.toString())
-                        Log.d(TAG, "SCHEDULED_TIME_BEGIN = " + scheduledTimeBegin.toString())
-                        Log.d(TAG, "SCHEDULED_TIME_END = " + scheduledTimeEnd.toString())
+                        Log.d(TAG, "CAPUTRE_INTERVAL = $CAPUTRE_INTERVAL")
+                        Log.d(TAG, "LOCATION_INTERVAL = $LOCATION_INTERVAL")
+                        Log.d(TAG, "IS_ALERT_ENABLED = $IS_ALERT_ENABLED")
+                        Log.d(TAG, "SCHEDULED_TIME_BEGIN = $scheduledTimeBegin")
+                        Log.d(TAG, "SCHEDULED_TIME_END = $scheduledTimeEnd")
                     }
                 }
             }
         }
-        monitorTask = object: Runnable  {
-            override fun run() {
-                mainHandler.postDelayed(monitorTask, CAPUTRE_INTERVAL)
+        monitorTask = Runnable {
+            mainHandler.postDelayed(monitorTask, CAPUTRE_INTERVAL)
 
-                if (isReady()) {
-                    captureHandler?.captureRequest()
-                }
+            if (isReady()) {
+                captureHandler?.captureRequest()
             }
         }
 
@@ -153,7 +147,7 @@ class CamService() : Service() {
             return false
         }
 
-        if ((getSystemService(POWER_SERVICE) as PowerManager).isInteractive == false) {
+        if (!(getSystemService(POWER_SERVICE) as PowerManager).isInteractive) {
             Log.d(TAG, "Screen device is off")
             return false
         }
@@ -297,24 +291,24 @@ class CamService() : Service() {
     }
 
     companion object {
-        val TAG = "CamService"
+        const val TAG = "CamService"
 
-        val ACTION_PREPARED = "pakaimasker.action.PREPARED"
-        val ACTION_STOPPED = "pakaimasker.action.STOPPED"
-        val ACTION_RESULT = "pakaimasker.action.RESULT"
-        val ACTION_LOCATION = "pakaimasker.action.LOCATION"
-        val ACTION_MONITOR = "pakaimasker.action.MONITOR"
-        val ACTION_UPDATE_SAFEZONE = "pakaimasker.action.UPDATE_SAFEZONE"
-        val ACTION_UPDATE_CONFIG = "pakaimasker.action.UPDATE_CONFIG"
-        val ACTION_SKIP_SAFEZONE = "pakaimasker.ACTION_SKIP_SAFEZONE"
-        val ACTION_SKIP_SCHEDULE = "pakaimasker.ACTION_SKIP_SCHEDULE"
+        const val ACTION_PREPARED = "pakaimasker.action.PREPARED"
+        const val ACTION_STOPPED = "pakaimasker.action.STOPPED"
+        const val ACTION_RESULT = "pakaimasker.action.RESULT"
+        const val ACTION_LOCATION = "pakaimasker.action.LOCATION"
+        const val ACTION_MONITOR = "pakaimasker.action.MONITOR"
+        const val ACTION_UPDATE_SAFEZONE = "pakaimasker.action.UPDATE_SAFEZONE"
+        const val ACTION_UPDATE_CONFIG = "pakaimasker.action.UPDATE_CONFIG"
+        const val ACTION_SKIP_SAFEZONE = "pakaimasker.ACTION_SKIP_SAFEZONE"
+        const val ACTION_SKIP_SCHEDULE = "pakaimasker.ACTION_SKIP_SCHEDULE"
 
-        val CHANNEL_ID = "cam_service_channel_id"
-        val CHANNEL_NAME = "cam_service_channel_name"
-        val ONGOING_NOTIFICATION_ID = 6660
+        const val CHANNEL_ID = "cam_service_channel_id"
+        const val CHANNEL_NAME = "cam_service_channel_name"
+        const val ONGOING_NOTIFICATION_ID = 6660
 
-        val REMINDER_CHANNEL_ID = "cam_service_reminder_channel_id"
-        val REMINDER_CHANNEL_NAME = "cam_service_reminder_channel_name"
-        val REMINDER_NOTIFICATION_ID = 6665
+        const val REMINDER_CHANNEL_ID = "cam_service_reminder_channel_id"
+        const val REMINDER_CHANNEL_NAME = "cam_service_reminder_channel_name"
+        const val REMINDER_NOTIFICATION_ID = 6665
     }
 }

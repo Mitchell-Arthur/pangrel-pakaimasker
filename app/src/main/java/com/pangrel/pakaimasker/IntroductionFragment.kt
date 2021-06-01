@@ -50,12 +50,12 @@ class IntroductionFragment(private val currentPage: Int = 0) : Fragment() {
             )
         layoutParams.setMargins(5, 0, 5, 0)
         for (i in dots.indices) {
-            dots[i] = ImageView(activity?.getApplicationContext())
+            dots[i] = ImageView(activity?.applicationContext)
             dots[i].apply {
                 this?.setImageDrawable(
                     activity?.let {
                         ContextCompat.getDrawable(
-                            it.getApplicationContext(),
+                            it.applicationContext,
                             R.drawable.inactive
                         )
                     }
@@ -74,7 +74,7 @@ class IntroductionFragment(private val currentPage: Int = 0) : Fragment() {
                 imageView.setImageDrawable(
                     activity?.let {
                         ContextCompat.getDrawable(
-                            it.getApplicationContext(),
+                            it.applicationContext,
                             R.drawable.active
                         )
                     }
@@ -83,7 +83,7 @@ class IntroductionFragment(private val currentPage: Int = 0) : Fragment() {
                 imageView.setImageDrawable(
                     activity?.let {
                         ContextCompat.getDrawable(
-                            it.getApplicationContext(),
+                            it.applicationContext,
                             R.drawable.inactive
                         )
                     }

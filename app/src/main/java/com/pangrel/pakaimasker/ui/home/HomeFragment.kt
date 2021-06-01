@@ -23,7 +23,6 @@ import com.pangrel.pakaimasker.CamService
 import com.pangrel.pakaimasker.ImageClassification
 import com.pangrel.pakaimasker.R
 import com.pangrel.pakaimasker.isServiceRunning
-import kotlinx.android.synthetic.main.dialog_connect.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -71,16 +70,16 @@ class HomeFragment : Fragment() {
                         if (dataSnapshot.value != null) dataSnapshot.value as HashMap<String, Boolean> else null
                     if (pairs != null) {
                         for ((uid, _) in pairs) {
-                            if (pairedDevices.containsKey(uid) == false) {
-                                pairedDevices.put(uid, Device(uid))
+                            if (!pairedDevices.containsKey(uid)) {
+                                pairedDevices[uid] = Device(uid)
                             }
                         }
 
-                        val Deviceadapter = DeviceAdapter(pairedDevices.values.toList())
+                        val deviceAdapter = DeviceAdapter(pairedDevices.values.toList())
 
                         rv_device.apply {
                             layoutManager = LinearLayoutManager(activity)
-                            adapter = Deviceadapter
+                            adapter = deviceAdapter
                         }
                     }
 
@@ -102,21 +101,18 @@ class HomeFragment : Fragment() {
 
                     if (scanned > 0) {
                         val percentage = Math.round((masked.toDouble() / scanned.toDouble() * 100))
-                        tv_persen.text = percentage.toString() + " %"
-                        // Tambah multi-bahasa mega
+                        tv_persen.text = "$percentage %"
                         tv_result.text =
-                            masked.toString() + " dari " + scanned.toString() + " scanning terdeteksi menggunakan masker"
+                            "$masked " + getString(R.string.homeFragment_tv_result_1) + " $scanned " + getString(R.string.homeFragment_tv_result_2)
                     } else {
                         tv_persen.text = "~ %"
-                        // Tambah multi-bahasa mega
-                        tv_result.text = "Belum menemukan data scanning"
+                        tv_result.text = getString(R.string.homeFragment_tv_result_3)
                     }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
                     tv_persen.text = "~ %"
-                    // Tambah multi-bahasa mega
-                    tv_result.text = "Terjadi kesalahan saat memperoleh data"
+                    tv_result.text = getString(R.string.homeFragment_tv_result_4)
                 }
             })
         }
@@ -145,7 +141,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val activity = getActivity()
+        val activity = activity
 
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth.currentUser
@@ -166,35 +162,31 @@ class HomeFragment : Fragment() {
                 println(deviceCode)
                 val uid = FirebaseAuth.getInstance().uid
                 btnAdd.isEnabled = false
-                FirebaseDatabase.getInstance().getReference("/codes/" + deviceCode).get()
+                FirebaseDatabase.getInstance().getReference("/codes/$deviceCode").get()
                     .addOnSuccessListener {
                         btnAdd.isEnabled = true
-                        if (it.exists() == false) {
-                            // Mega isi ketika gk ketemu, kasih toast berisi pesan device code tida kditemukan
+                        if (!it.exists()) {
                             Toast.makeText(
                                 context,
-                                "Device Code Tidak ditemukan",
+                                getString(R.string.homeFragment_deviceCode_1),
                                 Toast.LENGTH_SHORT
                             ).show()
                         } else {
                             if (it.value == uid) {
-                                // Mega kasih toast error
                                 Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
                             } else {
                                 FirebaseDatabase.getInstance()
                                     .getReference("/pairs/" + uid + "/" + it.value).setValue(true)
                                 Toast.makeText(
                                     context,
-                                    "Device Code Berhasil Ditambahkan",
+                                    getString(R.string.homeFragment_deviceCode_2),
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                // Tutup dialognya meg
                                 dialog.dismiss()
                             }
                         }
                     }.addOnFailureListener {
                         btnAdd.isEnabled = true
-                        // Mega kasih toast error
                         Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
                     }
             }
@@ -236,9 +228,7 @@ class HomeFragment : Fragment() {
         img_status.setImageResource(R.drawable.bingung_icon)
         lastStatusLabel.text = getString(R.string.monitoroff)
         tv_laststatus.text = ""
-
-        // Mega disini perlu di reset view UInya (teks) ubah kembali ke saat belum start monitor //DONE
-        tv_status.setText(getString(R.string.caption))
+        tv_status.text = getString(R.string.caption)
     }
 
     fun startMonitoring() {
@@ -251,10 +241,10 @@ class HomeFragment : Fragment() {
     private fun updateButtonText(running: Boolean) {
         if (running) {
             btnMonitoring.text = getString(R.string.OFF)
-            btnMonitoring.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.off)))
+            btnMonitoring.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.off))
         } else {
             btnMonitoring.text = getString(R.string.ON)
-            btnMonitoring.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.primary)))
+            btnMonitoring.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.primary))
         }
         btnMonitoring.isEnabled = true
     }
@@ -277,19 +267,18 @@ class HomeFragment : Fragment() {
                 activity?.getPreferences(Context.MODE_PRIVATE)?.getInt("zoneDistance", 0)
 
             img_status.setImageResource(R.drawable.safezone_icon)
-            tv_status.setText(getString(R.string.safe) + " " + zoneDistance + " " + getString(R.string.safezo) + zoneName + ")")
+            tv_status.text = getString(R.string.safe) + " " + zoneDistance + " " + getString(R.string.safezo) + zoneName + ")"
 
-            lastStatusLabel.setText(getString(R.string.insafezone))
-            tv_laststatus.setText("")
+            lastStatusLabel.text = getString(R.string.insafezone)
+            tv_laststatus.text = ""
         }
 
         if (lastStatus == "out_of_schedule") {
             img_status.setImageResource(R.drawable.safezone_icon)
-            // UBAH INI MEGA //UDA GINI AJA BAGUS ELAH UBAH APALAGI
-            tv_status.setText(getString(R.string.statusOut))
+            tv_status.text = getString(R.string.statusOut)
 
-            lastStatusLabel.setText(getString(R.string.OutSchedule))
-            tv_laststatus.setText("")
+            lastStatusLabel.text = getString(R.string.OutSchedule)
+            tv_laststatus.text = ""
         }
 
         if (lastStatus == "classification") {
@@ -307,29 +296,25 @@ class HomeFragment : Fragment() {
             if (classificationResult === ImageClassification.WITH_MASK) {
                 status = getString(R.string.Masked)
                 img_status.setImageResource(R.drawable.masked_icon)
-                // UBAH INI MEGA //DONE
-                tv_status.setText(getString(R.string.statusYes))
+                tv_status.text = getString(R.string.statusYes)
             }
             if (classificationResult === ImageClassification.WITHOUT_MASK) {
                 status = getString(R.string.Unmasked)
                 img_status.setImageResource(R.drawable.unmasked_icon)
-                // UBAH INI MEGA //DONE
-                tv_status.setText(getString(R.string.statusNo))
+                tv_status.text = getString(R.string.statusNo)
             }
 
-            lastStatusLabel.setText(getString(R.string.Last_Status))
-            tv_laststatus.setText(
-                status + " " + getString(R.string.at) + " " + dateTime.truncatedTo(
-                    ChronoUnit.SECONDS
-                ).format(DateTimeFormatter.ISO_LOCAL_TIME)
-            )
+            lastStatusLabel.text = getString(R.string.Last_Status)
+            tv_laststatus.text = status + " " + getString(R.string.at) + " " + dateTime.truncatedTo(
+                ChronoUnit.SECONDS
+            ).format(DateTimeFormatter.ISO_LOCAL_TIME)
         }
     }
 
     companion object {
-        val ACTION_MONITOR_ON = "homefragment.action.MONITOR_ON"
-        val ACTION_MONITOR_OFF = "homefragment.action.MONITOR_OFF"
-        val ACTION_UPDATE_RESULT = "homefragment.action.UPDATE_RESULT"
-        val ACTION_UPDATE_SAFEZONE = "homefragment.action.UPDATE_SAFEZONE"
+        const val ACTION_MONITOR_ON = "homefragment.action.MONITOR_ON"
+        const val ACTION_MONITOR_OFF = "homefragment.action.MONITOR_OFF"
+        const val ACTION_UPDATE_RESULT = "homefragment.action.UPDATE_RESULT"
+        const val ACTION_UPDATE_SAFEZONE = "homefragment.action.UPDATE_SAFEZONE"
     }
 }

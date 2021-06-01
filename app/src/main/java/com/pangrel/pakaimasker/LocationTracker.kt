@@ -124,7 +124,7 @@ class LocationTracker {
         Log.d(this.javaClass.name, "Location is stopped")
     }
 
-    fun startMonitor() {
+    private fun startMonitor() {
         if (isStarted) return
 
         if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -136,20 +136,14 @@ class LocationTracker {
 
         isStarted = true
 
-        // Create the location request to start receiving updates
         val locationRequest = LocationRequest()
             .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
             .setInterval(updateInterval)
-//            .setFastestInterval(updateInterval/2)
-//            .setSmallestDisplacement(smallDisplacementDistance)
 
-        // Create LocationSettingsRequest object using location request
         val builder = LocationSettingsRequest.Builder()
         builder.addLocationRequest(locationRequest!!)
         val locationSettingsRequest = builder.build()
 
-        // Check whether location settings are satisfied
-        // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
         val settingsClient = LocationServices.getSettingsClient(this.context)
         settingsClient.checkLocationSettings(locationSettingsRequest)
 

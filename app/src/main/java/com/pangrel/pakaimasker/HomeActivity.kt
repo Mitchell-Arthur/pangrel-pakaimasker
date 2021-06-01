@@ -36,7 +36,6 @@ class HomeActivity : AppCompatActivity() {
             when (p1?.action) {
                 CamService.ACTION_PREPARED -> startMonitoring()
                 CamService.ACTION_STOPPED -> stopMonitoring()
-//                CamService.ACTION_LOCATION -> handleSafeZone(p1)
                 CamService.ACTION_RESULT -> handleResult(p1)
                 CamService.ACTION_SKIP_SAFEZONE -> handleSkipSafeZone(p1.getParcelableExtra<Zone>("safePlace"))
                 CamService.ACTION_SKIP_SCHEDULE -> handleSkipSchedule()
@@ -50,7 +49,6 @@ class HomeActivity : AppCompatActivity() {
         val filter = IntentFilter()
         filter.addAction(CamService.ACTION_PREPARED)
         filter.addAction(CamService.ACTION_STOPPED)
-//        filter.addAction(CamService.ACTION_LOCATION)
         filter.addAction(CamService.ACTION_RESULT)
         filter.addAction(CamService.ACTION_SKIP_SAFEZONE)
         filter.addAction(CamService.ACTION_SKIP_SCHEDULE)
@@ -78,8 +76,6 @@ class HomeActivity : AppCompatActivity() {
             CODE_PERM_LOCATION -> {
                 if (grantResults?.firstOrNull() != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "App requires location permission to work!", Toast.LENGTH_LONG).show()
-                } else {
-
                 }
             }
         }

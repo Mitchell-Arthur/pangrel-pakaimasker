@@ -7,9 +7,9 @@
     <string name="todo">TODO</string>
     <string name="_100">100%</string>
     <string name="text_status">Penggunaan Masker Hari Ini</string>
-    <string name="status">Sedang memperoleh...</string>
+    <string name="status">Sedang memperoleh…</string>
     <string name="hi">Hi,</string>
-    <string name="name">Name</string>
+    <string name="name">Nama</string>
     <string name="starting">Memulai…</string>
     <string name="monitoroff">Monitoring mati</string>
     <string name="caption">Mari mulai monitoring untuk melawan virus corona</string>
@@ -34,7 +34,7 @@
     <string name="desdua">PakaiMasker adalah aplikasi mobile yang bertujuan untuk memantau seberapa tertib kita menggunakan masker dengan mengambil figur wajah setiap periode waktu</string>
     <string name="coba_sekarang">Coba Sekarang !!</string>
     <string name="desempat">Siap untuk tertib menggunakan masker? Coba PakaiMasker sekarang!</string>
-    <string name="hello">HELLO!</string>
+    <string name="hello">HALO!</string>
     <string name="dessatu">Selamat datang di aplikasi PakaiMasker, yuk ketahui seberapa tertibnya kamu memakai masker</string>
     <string name="fitur_pakaimasker">Fitur PakaiMasker</string>
     <string name="destiga">PakaiMasker menawarkan fitur pendeteksian masker, monitoring, rangkuman harian dan juga mode safe place</string>
@@ -61,8 +61,21 @@
     <string name="safe">Anda berada di zona aman (</string>
     <string name="safezo"> meter dari </string>
     <string name="dialog_pasangkan_perangkat">Pasangkan Perangkat</string>
-    <string name="dialog_add">Masukkan Device code</string>
+    <string name="dialog_add">Masukkan Kode Perangkat</string>
     <string name="dialog_addd">Tambahkan</string>
-
+    <string name="homeFragment.tv_result.1">dari</string>
+    <string name="homeFragment.tv_result.2">scan terdeteksi menggunakan masker</string>
+    <string name="homeFragment.tv_result.3">Belum menemukan data scan</string>
+    <string name="homeFragment.tv_result.4">Terjadi kesalahan saat memperoleh data</string>
+    <string name="homeFragment.deviceCode.1">Kode Perangkat Tidak Ditemukan</string>
+    <string name="homeFragment.deviceCode.2">Kode Perangkat Berhasil Ditambahkan</string>
+    <string name="logout">Apakah anda mau keluar?</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+    <string name="start_monitoring">Monitoring Dimulai Saat</string>
+    <string name="end_monitoring">Monitoring Diakhiri Saat</string>
+    <string name="schedule.1">set jam monitoring pada</string>
+    <string name="schedule.2">hingga</string>
+    <string name="gps.must.active">GPS harus aktif</string>
 
 </resources>

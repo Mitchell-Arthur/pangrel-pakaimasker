@@ -8,12 +8,12 @@
     <string name="todo">TODO</string>
     <string name="_100">100%</string>
     <string name="text_status">Current Mask Usage Today</string>
-    <string name="status">Fetching data...</string>
+    <string name="status">Fetching data…</string>
     <string name="hi">Hi,</string>
     <string name="name">Name</string>
-    <string name="starting">Starting …</string>
+    <string name="starting">Starting…</string>
     <string name="monitoroff">Monitoring is Off</string>
-    <string name="caption">Lets start monitoring to fight againts coronavirus</string>
+    <string name="caption">Lets start monitoring to fight against coronavirus</string>
     <string name="statusYes">Thank you for using a mask. Stick to the health protocols and stay safe.</string>
     <string name="statusNo">You are not wearing a mask. Please Use a Mask, or Add your current location as a Safe Place.</string>
     <string name="statusOut">You are out of scheduled monitoring time</string>
@@ -61,4 +61,22 @@
     <string name="insafezone"> In SafeZone</string>
     <string name="safe">You are in safe-zone (</string>
     <string name="safezo"> meters from </string>
+    <string name="dialog_pasangkan_perangkat">Connect Device</string>
+    <string name="dialog_add">Insert Device Code</string>
+    <string name="dialog_addd">Add</string>
+    <string name="homeFragment.tv_result.1">out of</string>
+    <string name="homeFragment.tv_result.2">scans detected using a mask</string>
+    <string name="homeFragment.tv_result.3">Haven\'t found scan data yet</string>
+    <string name="homeFragment.tv_result.4">An error occurred while obtaining data</string>
+    <string name="homeFragment.deviceCode.1">Device Code Not Found</string>
+    <string name="homeFragment.deviceCode.2">Device Code Successfully Added</string>
+    <string name="logout">log out?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="start_monitoring">Start Monitoring at</string>
+    <string name="end_monitoring">End Monitoring at</string>
+    <string name="schedule.1">set monitoring time</string>
+    <string name="schedule.2">until</string>
+    <string name="gps.must.active">GPS must be active!</string>
+
 </resources>

@@ -47,7 +47,7 @@ class Zone() : Parcelable {
     }
 
     override fun toString(): String {
-        return name + Zone.delimeter + latitude.toString() + Zone.delimeter + longitude.toString()
+        return name + delimeter + latitude.toString() + delimeter + longitude.toString()
     }
 
     companion object CREATOR : Parcelable.Creator<Zone> {
@@ -60,7 +60,7 @@ class Zone() : Parcelable {
         }
 
 
-        val delimeter = "!"
+        const val delimeter = "!"
 
         fun createFromString(raw: String): Zone {
             Log.d("zone", delimeter)

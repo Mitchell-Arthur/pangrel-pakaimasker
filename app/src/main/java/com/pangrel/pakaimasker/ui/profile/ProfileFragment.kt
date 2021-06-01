@@ -46,7 +46,7 @@ class ProfileFragment : Fragment() {
         val uid = FirebaseAuth.getInstance().uid
 
         if (uid != null) {
-            FirebaseDatabase.getInstance().getReference("/users/" + uid + "/code").get().addOnSuccessListener {
+            FirebaseDatabase.getInstance().getReference("/users/$uid/code").get().addOnSuccessListener {
                 tv_devicecode.text = it.value.toString()
             }.addOnFailureListener{
                 tv_devicecode.text = "-"
@@ -85,13 +85,13 @@ class ProfileFragment : Fragment() {
 
         btnKeluar.setOnClickListener {
             val alert: AlertDialog.Builder = AlertDialog.Builder(context)
-            alert.setTitle("Apakah anda mau keluar?")
-            alert.setPositiveButton("Ya") { dialog, whichButton ->
+            alert.setTitle(getString(R.string.logout))
+            alert.setPositiveButton(getString(R.string.yes)) { dialog, whichButton ->
                 Firebase.auth.signOut()
                 (activity as HomeActivity).setLogin(false)
                 (activity as HomeActivity).toLogin()
             }
-            alert.setNegativeButton("Tidak", null)
+            alert.setNegativeButton(getString(R.string.no), null)
             alert.show()
         }
 
@@ -126,7 +126,7 @@ class ProfileFragment : Fragment() {
                 calendarFrom.get(Calendar.MINUTE),
                 true
             )
-            pickerFrom.setTitle("Start Monitoring at")
+            pickerFrom.setTitle(getString(R.string.start_monitoring))
 
             val timeUntilListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                 calendarUntil.set(Calendar.HOUR_OF_DAY, hourOfDay)
@@ -144,7 +144,7 @@ class ProfileFragment : Fragment() {
                 calendarUntil.get(Calendar.MINUTE),
                 true
             )
-            pickerUntil.setTitle("End Monitoring at")
+            pickerUntil.setTitle(getString(R.string.end_monitoring))
 
             btnScheduleStart.setOnClickListener {
                 pickerFrom.show()
@@ -154,7 +154,7 @@ class ProfileFragment : Fragment() {
             }
 
             btnSetSchedule.setOnClickListener {
-                Toast.makeText(context, "set monitor time $timeFrom until $timeUntil", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.schedule_1) + " $timeFrom " + getString(R.string.schedule_2) + " $timeUntil", Toast.LENGTH_SHORT).show()
                 (activity as HomeActivity).updateMonitoringSchedule(timeFrom, timeUntil)
                 dialog.dismiss()
             }
@@ -164,8 +164,7 @@ class ProfileFragment : Fragment() {
                 timeUntil = ""
 
                 btnScheduleStart.text = getString(R.string.dialog_jadwal_time)
-                val mode1 = context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)
-                when (mode1) {
+                when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
                     Configuration.UI_MODE_NIGHT_YES -> {
                         btnScheduleStart.setBackgroundColor(resources.getColor(R.color.purple_200))
                     }
@@ -177,8 +176,7 @@ class ProfileFragment : Fragment() {
                 btnScheduleStart.setTextColor(Color.WHITE)
 
                 btnScheduleEnd.text = getString(R.string.dialog_jadwal_time)
-                val mode2 = context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)
-                when (mode2) {
+                when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
                     Configuration.UI_MODE_NIGHT_YES -> {
                         btnScheduleEnd.setBackgroundColor(resources.getColor(R.color.purple_200))
                     }
@@ -310,13 +308,12 @@ class ProfileFragment : Fragment() {
     }
 
     private fun addLocation(adapter: SafeZoneAdapter, button: Button, dialog: AlertDialog, name: String) {
-        // Now create a location manager
         val locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         if (activity?.applicationContext == null) return
 
         if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-            Toast.makeText(activity?.applicationContext, "GPS must be active!", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity?.applicationContext, getString(R.string.gps_must_active), Toast.LENGTH_LONG).show()
             return
         }
 
@@ -328,7 +325,7 @@ class ProfileFragment : Fragment() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Toast.makeText(activity?.applicationContext, "GPS must be active!", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity?.applicationContext, getString(R.string.gps_must_active), Toast.LENGTH_LONG).show()
             return
         }
 
@@ -337,16 +334,7 @@ class ProfileFragment : Fragment() {
         val locationListener: LocationListener = object : LocationListener {
             override fun onLocationChanged(currentLocation: Location) {
                 Log.d("Location Changes", currentLocation.toString())
-
-//                val intent = Intent(CamService.ACTION_ADD_SAFEZONE)
-//
-//                intent.putExtra("name", name)
-//                intent.putExtra("location", currentLocation)
-//
-//                activity?.sendBroadcast(intent)
-
                 adapter.locations.add(Zone(name, currentLocation.latitude, currentLocation.longitude))
-                //(lvSafeZone.adapter as SafeZoneAdapter).locations = locations
                 adapter.notifyDataSetChanged()
 
                 dialog.dismiss()
@@ -375,9 +363,5 @@ class ProfileFragment : Fragment() {
 
 
         locationManager.requestSingleUpdate(criteria, locationListener, null)
-    }
-
-    private fun isTimeValid(){
-
     }
 }

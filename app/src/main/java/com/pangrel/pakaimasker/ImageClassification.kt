@@ -13,12 +13,11 @@ interface OnEventListener<T> {
 }
 
 interface ClassificationResult {
-//    val image: ByteArray?
     val face: Int
     val classification: Int
     val accuracy: Double
-    val min_accuracy: Double
-    val max_accuracy: Double
+    val minAccuracy: Double
+    val maxAccuracy: Double
     val duration: Long
     val sample: Int
     val raw: String?
@@ -29,7 +28,7 @@ class ImageClassification : AsyncTask<MutableList<Bitmap>, Void, ClassificationR
     private var mContext: Context? = null
     private var classificationModule: PyObject? = null
 
-    var mException: java.lang.Exception? = null
+    private var mException: java.lang.Exception? = null
 
 
     fun setCallback(callback: OnEventListener<ClassificationResult>) {
@@ -63,23 +62,22 @@ class ImageClassification : AsyncTask<MutableList<Bitmap>, Void, ClassificationR
             val endTime = System.currentTimeMillis()
 
             val output = object : ClassificationResult {
-//                override val image = lastImage
                 override var face = 0
                 override var classification = UNSURE
                 override var accuracy = 1.0
-                override var min_accuracy = 1.0
-                override var max_accuracy = 0.0
+                override var minAccuracy = 1.0
+                override var maxAccuracy = 0.0
                 override val duration = (endTime - startTime)
                 override val sample = results.size
                 override val raw = results.toString()
 
                 override fun toString(): String {
-                    return "Face: " + face + ", Classification: " + classification + ", Accuracy: " + accuracy + ", Min Accuracy: " + min_accuracy + ", Max Accuracy: " + max_accuracy + ", Duration: " + duration + ", Sample: " + sample
+                    return "Face: $face, Classification: $classification, Accuracy: $accuracy, Min Accuracy: $minAccuracy, Max Accuracy: $maxAccuracy, Duration: $duration, Sample: $sample"
                 }
             }
 
             val firstTotalFace = results.get(0).size
-            val firstClass = if (firstTotalFace > 0) results.get(0).get(0).asList().get(0).toInt() else NOT_FOUND
+            val firstClass = if (firstTotalFace > 0) results[0][0].asList()[0].toInt() else NOT_FOUND
 
             var totalAcc = 0.0
             for (result in results) {
@@ -92,20 +90,20 @@ class ImageClassification : AsyncTask<MutableList<Bitmap>, Void, ClassificationR
 
                 if (totalFace > 0) {
                     for (face in result) {
-                        val cls = face.asList().get(0).toInt()
-                        val acc = face.asList().get(1).toDouble()
+                        val cls = face.asList()[0].toInt()
+                        val acc = face.asList()[1].toDouble()
 
                         if (cls != firstClass) {
                             Log.d("ImageClassification CLASS", output.toString())
                             return output
                         }
 
-                        if (acc < output.min_accuracy) {
-                            output.min_accuracy = acc
+                        if (acc < output.minAccuracy) {
+                            output.minAccuracy = acc
                         }
 
-                        if (acc > output.max_accuracy) {
-                            output.max_accuracy = acc
+                        if (acc > output.maxAccuracy) {
+                            output.maxAccuracy = acc
                         }
 
                         totalAcc += acc
@@ -143,15 +141,14 @@ class ImageClassification : AsyncTask<MutableList<Bitmap>, Void, ClassificationR
     private fun BitmapToByte(bitmap: Bitmap): ByteArray? {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-        val byteArray = stream.toByteArray()
-        return byteArray
+        return stream.toByteArray()
     }
 
     companion object {
-        val UNDEFINED = -3
-        val UNSURE = -2
-        val NOT_FOUND = -1
-        val WITH_MASK = 0
-        val WITHOUT_MASK = 1
+        const val UNDEFINED = -3
+        const val UNSURE = -2
+        const val NOT_FOUND = -1
+        const val WITH_MASK = 0
+        const val WITHOUT_MASK = 1
     }
 }
