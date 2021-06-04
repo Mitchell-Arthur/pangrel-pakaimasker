@@ -56,10 +56,11 @@ class CaptureHandler {
 
         cameraID = camID
 
-        val width = 272
-        val height = 272
+        // val width = 272
+        // val height = 272
 
-        val previewSize = chooseSupportedSize(cameraID!!, width, height)
+        // val previewSize = chooseSupportedSize(cameraID!!, width, height)
+        val previewSize = Size(320, 240)
 
         imageReader = ImageReader.newInstance(
             previewSize!!.getWidth(),
@@ -150,7 +151,8 @@ class CaptureHandler {
         return Size(320, 200)
     }
     private fun imageToBitmap(image: Image, rotationDegrees: Float): Bitmap? {
-        val ib = ByteBuffer.allocate(image.getHeight() * image.getWidth() * 2)
+        val ib = ByteBuffer.allocate(image.getHeight() * image.getWidth() * 3)
+
         val y: ByteBuffer = image.getPlanes().get(0).getBuffer()
         val cr: ByteBuffer = image.getPlanes().get(1).getBuffer()
         val cb: ByteBuffer = image.getPlanes().get(2).getBuffer()

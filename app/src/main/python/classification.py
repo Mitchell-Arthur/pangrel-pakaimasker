@@ -24,28 +24,14 @@ anchor_ratios = [[1, 0.62, 0.42]] * 5
 # generate anchors
 anchors = generate_anchors(feature_map_sizes, anchor_sizes, anchor_ratios)
 
-# for inference , the batch size is 1, the model output shape is [1, N, 4],
-# so we expand dim for anchors to [1, anchor_num, 4]
 anchors_exp = np.expand_dims(anchors, axis=0)
 
 def inference(image,
               conf_thresh=0.5,
               iou_thresh=0.4,
               ):
-    '''
-    Main function of detection inference
-    :param image: 3D numpy array of image
-    :param conf_thresh: the min threshold of classification probabity.
-    :param iou_thresh: the IOU threshold of NMS
-    :param target_shape: the model input size.
-    :param draw_result: whether to daw bounding box to the image.
-    :param show_result: whether to display the image.
-    :return:
-    '''
-    # image = np.copy(image)
     output_info = []
-    image_np = np.divide(image, 255, dtype=np.float32)  # 归一化到0~1
-    # print(image_np)
+    image_np = np.divide(image, 255, dtype=np.float32)
     image_exp = np.expand_dims(image_np, axis=0)
 
     # input_details[0]['index'] = the index which accepts the input
