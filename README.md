@@ -18,3 +18,7 @@ Python is required for installation and compiling Python libraries required for 
 5. Build for download all required resources
 
 This repository using our own Firebase project, if you want to use your own, you can [Add Firebase to your Android project](https://firebase.google.com/docs/android/setup)
+
+## Download ##
+
+You can test this project using released apk [here](https://github.com/Mitchell-Arthur/pangrel-pakaimasker/raw/main/app/release/app-release.apk)
