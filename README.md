@@ -21,4 +21,4 @@ This repository using our own Firebase project, if you want to use your own, you
 
 ## Download ##
 
-You can test this project using released apk [here](https://github.com/Mitchell-Arthur/pangrel-pakaimasker/raw/main/app/release/app-release.apk)
+You can test this project using released signed apk, [Download Here](https://github.com/Mitchell-Arthur/pangrel-pakaimasker/raw/main/app/release/app-release.apk)
